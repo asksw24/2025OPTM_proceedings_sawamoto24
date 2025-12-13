@@ -266,15 +266,18 @@ The experimental results demonstrate a speedup of several orders of magnitude co
 
 \subsection{Limitations and Potential Improvements}
 There are several limitations to this study.
-First, some confusion was observed between specific resins, particularly PET and HDPE (PET misclassification rate: approx. 35\%).
-Although their EEM spectral shapes are originally different, the reduction of wavelength bands to prioritize data acquisition efficiency caused their feature values to become close in the selected feature space.
-However, when we applied t-SNE to the pre-processed full-spectrum data, the clusters of each polymer were clearly separated in the low-dimensional space.
-This fact demonstrates that sufficient information for discrimination is preserved even after pre-processing.
-Therefore, the root cause of the misclassification is not information loss, but rather that the current linear-based classification model could not fully capture the highly non-linear decision boundaries between similar spectra.
-This issue can likely be improved by introducing non-linear classifiers such as Deep Learning, which can learn manifold structures, to improve accuracy without changing the pre-processing method.
 
-Second is the scope of comparison. Since this study focuses on throughput improvement, strict particle-to-particle comparison with conventional methods was not performed.
-Third, this experiment was conducted using virgin pellets. Since microplastics in actual marine environments may have altered fluorescence characteristics due to biofilm adhesion or weathering, further verification using real environmental samples is necessary.
+First, some confusion was observed between PET and HDPE (PET misclassification rate: approx. 35\%).
+Although their EEM spectral shapes are originally different, the reduction of wavelength bands to prioritize data acquisition efficiency caused their feature values to become close in the selected feature space (feature overlap).
+
+Therefore, the root cause of the misclassification is attributable to the significant feature overlap between these classes in the reduced 8-dimensional space.
+While the current Random Forest model struggled to separate these overlapping clusters, introducing representation learning methods such as Deep Learning could potentially improve discrimination by learning more complex manifold structures.
+
+Second is the scope of direct accuracy comparison.
+Since this study focuses on throughput improvement, strict particle-to-particle comparison with conventional methods was not performed.
+
+Third, this experiment was conducted using virgin pellets.
+Since microplastics in actual marine environments may have altered fluorescence characteristics due to biofilm adhesion or weathering, further verification using real environmental samples is necessary.
 
 \subsection{System Design for Field Deployment}
 This study was conducted as a proof-of-principle for the future construction of a high-throughput system.
