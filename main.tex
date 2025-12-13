@@ -1,0 +1,259 @@
+\PassOptionsToPackage{nomove}{cite}
+\documentclass[a4paper]{spie}  % SPIE format
+
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{subcaption}
+
+% -----------------------------------------------------------
+% 引用スタイル強制変更パッチ
+% spie.cls が citeパッケージを [superscript] で読み込むため、
+% その内部コマンド \@citess を上書きして [1] に戻す
+% -----------------------------------------------------------
+\makeatletter
+\renewcommand{\@citess}[1]{\textnormal{\space[#1]}}
+\makeatother
+% -----------------------------------------------------------
+% ※解説:
+% \textnormal{...} : 上付き(superscript)を解除して普通の文字サイズに戻す
+% \space         : 上付きモードは直前のスペースを消す仕様(\unskip)があるため、強制的にスペースを入れる
+% [#1]           : 数字を [] で囲む
+% -----------------------------------------------------------
+
+
+% Title: Based on the template provided
+\title{none}
+
+% Authors: Placeholder
+\author[a]{Asuka Sawamoto}
+\author[b]{Shigeki Nakauchi}
+
+% 所属 (Affiliations)
+% [a]と[b]の両方を指定して、同じ所属にします
+\affil[a,b]{Department of Computer Science and Engineering, Toyohashi University of Technology, 1-1 Hibarigaoka, Tempaku-cho, Toyohashi, Aichi, Japan 441-8580}
+
+% 著者情報 (フッターの連絡先)
+% 通常は責任著者(教授)か、筆頭著者のどちらかの連絡先を書きます。
+% ここでは教授(S.N.)をCorresponding Authorとする例を書いておきます。
+\authorinfo{Further author information: (Send correspondence to A.S.)\\A.S.: E-mail: sawamoto.asuka.us@tut.jp, Telephone: +81 90 7647 0330}
+% もし自分の連絡先にする場合は S.N. を自分のイニシャルに変えてください
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+% % Abstract from the template is used as the PDF version was "To be written".
+% The accumulation of microplastics (MPs) in the natural environment has become a serious global issue. However, standard analytical methods such as FTIR and Raman spectroscopy face practical limitations in processing capacity for on-site analysis. In this study, we propose a multispectral imaging method based on Excitation-Emission Matrix (EEM) features acquired under deep UV excitation. Using a Random Forest-based feature selection, we identified an optimal subset of 8 wavelength bands that minimizes acquisition time while maintaining classification accuracy. This approach enables high-throughput screening suitable for industrial applications.
+\end{abstract}
+
+\keywords{Microplastics, Fluorescence imaging, UV excitation, Machine learning, Spectral optimization, High-throughput screening}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODUCTION}
+The widespread accumulation of microplastics (MPs) in the natural environment has become an increasingly serious international issue~\cite{Hale2020-sc, Jambeck2015-yz}. To understand the actual state of MP pollution and identify its sources, it is necessary to comprehensively quantify the distribution and flux of MPs across various media~\cite{Rocha-Santos2015-ph}.
+
+However, while conventional analytical methods such as Fourier Transform Infrared Spectroscopy (FTIR) and Raman spectroscopy excel at identifying the chemical structure of MPs, they rely on point-scanning, which requires an enormous amount of time for analysis~\cite{Prata2019-kt, Shim2017-kb}. Therefore, for in-process applications, there is a strong demand for the development of high-throughput solutions that achieve both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}.
+
+In this study, we propose a multispectral imaging method specialized for polymer identification based on the Excitation-Emission Matrix (EEM). This method utilizes the inherent auto-fluorescence emitted by polymers under UV excitation to capture the spectral features necessary for classification as images. First, toward the future construction of a high-throughput system, we conducted a feasibility study using a benchtop system equipped with a broadband light source. Furthermore, we identified a combination of wavelength bands that minimizes measurement time while maintaining classification accuracy.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{PRINCIPLE}
+
+\subsection{Fluorescence Characteristics}
+Most petroleum-based synthetic polymers emit specific auto-fluorescence under ultraviolet excitation due to their chemical structures, such as electron conjugated systems, and additives. This fluorescence characteristic depends on the EEM and serves as a unique fingerprint for each resin type. In this study, we use these EEM characteristics as the physical basis for MP classification.
+
+Generally, the fluorescence intensity $F$ at an excitation wavelength $\lambda_{ex}$ and an emission wavelength $\lambda_{em}$ is described by the following simplified model:
+
+\begin{equation}
+\label{eq:fluorescence}
+F(\lambda_{ex}, \lambda_{em}) = K \cdot I_0(\lambda_{ex}) \cdot (1 - 10^{-\varepsilon(\lambda_{ex})cL}) \cdot \Phi(\lambda_{ex}, \lambda_{em})
+\end{equation}
+
+where $K$ is the instrument constant (geometric factors and detection efficiency), $I_0$ is the excitation light intensity, $\varepsilon$ is the molar absorption coefficient, $c$ is the concentration, $L$ is the optical path length, and $\Phi$ is the fluorescence quantum yield. In the dilute solution approximation or thin film approximation, Equation (\ref{eq:fluorescence}) can be considered linear with respect to the material-intrinsic parameters $\varepsilon$ and $\Phi$.
+
+Since the spectral profiles of $\varepsilon$ (absorption characteristics) and $\Phi$ (emission efficiency) differ depending on the polymer type, measuring these at multiple wavelengths enables material identification. As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Tech). The obtained EEM spectra are shown in Figure~\ref{fig:eem}. These results confirmed that each polymer possesses a specific fluorescence spectrum under UV excitation.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/EEM.jpg}
+  \caption{Excitation-Emission Matrices (EEMs) of the nine types of virgin polymer pellets used in this study. The contour plots represent the fluorescence intensity [a.u.], with resin names indicated above each plot. The distinct spectral patterns (fingerprints) observed for each polymer type demonstrate the feasibility of classification based on UV-excited fluorescence. Note: The diagonal regions corresponding to Rayleigh and Raman scattering have been computationally removed to enhance the visibility of fluorescence features.
+  \label{fig:eem}}
+\end{figure}
+
+\subsection{Data-Driven Band Selection}
+To achieve the high-throughput imaging essential for effective on-site environmental monitoring, minimization of data acquisition time is required. Acquiring and processing spectral data for the entire wavelength range (Datacube) is inefficient for real-time processing due to the massive data volume and spectral redundancy. Therefore, an approach is needed to selectively acquire only the minimal wavelength bands that have a high contribution to discrimination. However, since spectral data possess strong correlations between bands and contain non-linear relationships, it is difficult to determine the optimal subset using simple linear models.
+
+In this study, we employed Random Forest (RF), which can account for non-linear interactions between features. In RF, the importance (Gini Importance) of a feature (wavelength band) $X_j$ is defined as the sum of the decrease in impurity at the nodes where that feature was used for splitting, as shown in the following equation:
+
+\begin{equation}
+\label{eq:gini}
+I_G(X_j) = \frac{1}{N_T} \sum_{T} \sum_{t \in T: v(s_t) = X_j} p(t) \Delta i(s_t, t)
+\end{equation}
+
+where $N_T$ is the total number of trees constituting the forest, $v(s_t)$ is the variable used for splitting at node $t$, $p(t)$ is the proportion of samples reaching node $t$, and $\Delta i(s_t, t)$ indicates the Gini Impurity Decrease due to the split.
+
+Based on this $I_G(X_j)$, we applied a stepwise method in which bands with high importance are sequentially added and evaluated. This allowed us to determine the optimal band configuration that minimizes imaging time while maintaining classification accuracy.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{EXPERIMENTAL SETUP}
+
+\subsection{Optical Configuration}
+To acquire comprehensive data for spectral optimization, we used a benchtop evaluation system equipped with a broadband light source~\cite{Bui2018-hw}. The schematic diagram of the experimental apparatus is shown in Figure~\ref{fig:setup}. A broadband xenon lamp (MAX-303, ASAHI-SPECTRA) was used as the light source. The excitation wavelength was selected via bandpass filters within a filter wheel and irradiated the sample through an optical fiber. The emitted light from the sample passed through an emission-side bandpass filter, which removed the reflection component (scattered light) of the excitation light, allowing only the fluorescence signal transmitted through the filter to be detected by a UV-sensitive camera (BU-56DUV, BITRAN).
+
+\begin{figure}[ht]
+  \centering
+  % 画像ファイルがあるときは↓のコメントアウトを外す
+  \includegraphics[width=0.8\linewidth]{figures/experimental_setup.jpg}
+
+  % 【重要】labelはcaptionのカッコ {} の中に入れるのがSPIE流です
+  \caption{Schematic diagram of the benchtop evaluation system used for hyperspectral data acquisition. A broadband xenon lamp and interchangeable bandpass filters were used to excite the samples, and the emitted fluorescence was captured by a UV-sensitive camera to construct a comprehensive dataset for spectral optimization.
+  \label{fig:setup} }
+\end{figure}
+
+
+\subsection{Samples and Data Acquisition}
+We used nine types of virgin resin pellets (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, ABS), which account for the majority of global plastic production, as experimental samples. The size of each pellet is approximately 3-5 mm (Figure~\ref{fig:samples}a). While these are transparent or white under visible light and difficult to distinguish, it was confirmed that they exhibit characteristic fluorescence intensity differences under UV excitation (Figure~\ref{fig:samples}b, c). To improve data acquisition efficiency, the nine types of pellets were arranged within the same field of view during imaging. The datasets used for model training and evaluation were acquired in independent imaging sessions with different sample arrangement conditions.
+
+\begin{itemize}
+    \item \textbf{Training Set:} To cover spectral variations depending on the arrangement state and learn robust features, we integrated images acquired in the following two sections:
+    \begin{enumerate}
+        \item \textit{Adjacent Arrangement:} Images where pellets of the same type are arranged to touch and cluster together.
+        \item \textit{Dispersed Arrangement:} Images where pellets are randomly dispersed so that they do not touch each other.
+    \end{enumerate}
+    \item \textbf{External Validation Set:} A dataset used solely for the final performance evaluation of the model, not used in the training process. It consists only of images with Dispersed Arrangement. This verified the pure identification capability for unknown data.
+\end{itemize}
+
+\begin{figure}[ht]
+  \centering
+  % --- 1枚目 (左) ---
+  % 幅を0.32 (3分の1より少し小さく) に設定
+  \begin{minipage}[b]{0.31\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{figures/sample_RGB.jpg}
+      \subcaption{Visible Light}
+      \label{fig:samples_a}
+  \end{minipage}
+  \hfill % 均等な隙間を空ける
+  % --- 2枚目 (中央) ---
+  \begin{minipage}[b]{0.32\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{figures/plastics_Ex320_Em400.jpg}
+      \subcaption{Ex 320 / Em 400}
+      \label{fig:samples_b}
+  \end{minipage}
+  \hfill % 均等な隙間を空ける
+  % --- 3枚目 (右) ---
+  \begin{minipage}[b]{0.32\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{figures/plastics_Ex360_Em480.jpg}
+      \subcaption{Ex 360 / Em 480}
+      \label{fig:samples_c}
+  \end{minipage}
+
+  % --- 全体のキャプション ---
+  \caption{Images of the experimental samples consisting of nine types of virgin polymer pellets. (a) Visible light image; most samples appear transparent or white. (b, c) Representative fluorescence images acquired at (b) Ex 320 nm / Em 400 nm and (c) Ex 360 nm / Em 480 nm. Note: The sample arrangement differs between visible and fluorescence images.
+  \label{fig:samples}}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{METHOD}
+
+\subsection{Pre-processing}
+The pixel intensity of the acquired fluorescence images strongly depends on the geometric shape of the sample, the distance from the light source, and the non-uniformity of illumination. These variations in absolute intensity values hinder accurate polymer identification. Therefore, in this study, to achieve robust identification based solely on the polymer-specific ``spectral profile'' rather than absolute intensity, we applied the following minimum value subtraction and L2 normalization to the spectral data vector $\mathbf{x}$ of each pixel:
+
+\begin{equation}
+\label{eq:preprocessing}
+\mathbf{x}' = \frac{\mathbf{x} - \min(\mathbf{x})}{\|\mathbf{x} - \min(\mathbf{x})\|_2} .
+\end{equation}
+
+This process generates a normalized feature vector $\mathbf{x}'$ that is independent of lighting conditions and sample arrangement.
+
+\subsection{Feature Selection Strategy}
+To determine the optimal subset of wavelength bands, we implemented the step-wise method based on the Random Forest Gini Importance described in Section 2.2. The specific procedure is as follows:
+
+\begin{enumerate}
+    \item \textbf{Ranking (Importance Calculation):} An RF model was trained using the pre-processed training set, and the importance $I_G(X_j)$ of each band was calculated based on Equation (\ref{eq:gini}).
+    \item \textbf{Iterative Evaluation:} Features (bands) were added to the model one by one in descending order of calculated importance, and discrimination performance was evaluated each time.
+    \item \textbf{Determination of Optimal Subset:} To consider the balance of the entire system rather than just specific plastics, the ``Weighted Average F1-Score of all 9 classes'' was adopted as the evaluation metric. The point where the increase in F1-score saturated with the increase in the number of bands, and the number of images was minimized, was adopted as the optimal band configuration.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{RESULTS}
+
+\subsection{Optimization of Spectral Bands}
+The results of feature selection by the step-wise method using the training dataset are shown in Figure~\ref{fig:optimization}. As the number of wavelength bands $k$ used increased, the weighted F1-score for all 9 classes rose rapidly, exceeding 0.90 at $k=2$. Subsequently, the improvement in the score became gradual, and it was confirmed that it almost saturated (0.99 or higher) around $k=5$. Finally, considering the trade-off between slight accuracy improvement and computational cost, we adopted the band configuration of $k=8$, which showed the highest stability, as the optimal solution. In this internal validation stage, the model showed an extremely high precision rate.
+
+% \begin{figure}[ht]
+%   \centering
+%   % ファイル名は適宜変更してください
+%   \includegraphics[width=0.7\linewidth]{fig3_optimization.png}
+%   \caption{Normalized Model: F1-Score vs. Number of Features. The weighted F1-score saturates around $k=5$, indicating that a small subset of bands is sufficient for classification.
+%   \label{fig:optimization}}
+% \end{figure}
+
+\subsection{Performance on External Dataset}
+Using the selected 8 bands, we classified the external validation dataset. As a result, a high weighted average F1-score (comparable to the training phase) was maintained. As shown in Figure~\ref{fig:confusion}, 7 out of the 9 types were classified with extremely high precision (F1-score $\ge$ 0.98). The fact that similar trends were observed in the external data as in the training phase is evidence that the constructed model is not overfitting to specific sample arrangements or lighting conditions, but that the selected features function regardless of arrangement.
+
+% \begin{figure}[ht]
+%   \centering
+%   % Confusion Matrixの画像ファイルを指定してください
+%   \includegraphics[width=0.7\linewidth]{fig4_confusion_matrix.png}
+%   \caption{Confusion matrix evaluated on the external validation dataset using the selected 8 bands. The diagonal elements represent the recall for each polymer class. Most classes show high classification accuracy, demonstrating the robustness of the proposed spectral features.
+%   \label{fig:confusion}}
+% \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{DISCUSSION}
+
+\subsection{Interpretation of Optimization Behavior}
+In the step-wise method adopted in this study, a temporary decrease in the score for HDPE was observed (Section 5.1). This is interpreted as a class-specific trade-off resulting from the algorithm prioritizing global optimization to maximize the average performance of all classes. However, for the purpose of this study, which is the simultaneous screening of a wide variety of plastics, it is rational to prioritize the improvement of the system's overall average performance over slight fluctuations in specific classes. As a result, the selected 8 bands showed high generalization performance on the external dataset (Section 5.2), confirming the effectiveness of this optimization strategy.
+
+\subsection{High-Throughput Capability}
+The greatest advantage of this method is the overwhelming throughput achieved by area-scan. The experimental results demonstrate a speedup of several orders of magnitude compared to conventional point-scanning methods.
+
+\subsection{Limitations and Potential Improvements}
+There are several limitations to this study. First, some confusion was observed between PET and HDPE (PET misclassification rate: approx. 35\%). Although their EEM spectral shapes are originally different, the reduction of wavelength bands to prioritize data acquisition efficiency caused their feature values to become close in the selected feature space (feature overlap), making the discrimination boundary ambiguous. This issue has the potential to be improved by introducing Deep Learning, which can learn more complex non-linear boundaries, to improve accuracy even with a limited number of bands.
+Second is the scope of direct accuracy comparison. Since this study focuses on throughput improvement, strict particle-to-particle comparison with conventional methods was not performed.
+Third, this experiment was conducted using virgin pellets. Since microplastics in actual marine environments may have altered fluorescence characteristics due to biofilm adhesion or weathering, further verification using real environmental samples is necessary.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{CONCLUSION}
+In this study, we demonstrated the feasibility of a high-throughput microplastic sorting method using UV excitation fluorescence imaging. Through band selection using the step-wise method, we revealed that an average classification accuracy of 89\% can be obtained with only 8 wavelength bands. The proposed method achieves high throughput compared to conventional methods and has high industrial practicality. In the future, we aim for the field deployment of this method and will transition to the verification phase in real environments.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{FUTURE WORK: DEVELOPMENT OF A COMPACT DEDICATED SYSTEM}
+As mentioned in the Introduction, this study was conducted as a proof-of-principle for the future construction of a high-throughput system. Based on the verification results in this paper, we designed a small dedicated system for on-site implementation. Figure~\ref{fig:future_system} shows the block diagram of the proposed system. To replace the large benchtop equipment, high-power UV-LEDs were adopted as the light source. On the other hand, commercially available LEDs have a wider Full Width at Half Maximum (FWHM) compared to bandpass filters, and the selectable center wavelengths are discrete. In addition, important wavelength bands contributing to identification may change due to system-specific factors such as the camera's spectral sensitivity characteristics and light source intensity. Therefore, in this design, we selected a group of commercially available LEDs that approximate the spectral regions suggested to be effective in the benchtop experiment. In the future, using the compact dedicated system, we plan to perform re-optimization of features based on actual hardware characteristics and proceed with demonstration experiments using actual sea area samples. A single-board computer (SBC, e.g., Raspberry Pi 5) will be adopted for the control system, aiming to realize a low-cost, standalone monitoring solution.
+
+\begin{figure}[ht]
+  \centering
+  % 画像ファイルがある場合はコメントアウトを外してください
+  \includegraphics[width=0.8\linewidth]{figures/LED_system.jpg}
+
+  % % 画像がない場合のプレースホルダー
+  % \fbox{\parbox{0.8\linewidth}{\centering \vspace{2cm} [Figure 5: System Block Diagram] \vspace{2cm}}}
+
+  \caption{Block diagram of the proposed compact dedicated system. High-power UV-LEDs and an SBC are used to achieve a standalone, low-cost solution.
+  \label{fig:future_system}}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% References
+
+\bibliographystyle{spiebib}  % 1. SPIEのフォーマット(spiebib.bst)を使うよ、という指定
+\bibliography{report}        % 2. report.bib というファイルからデータを読むよ、という指定
+
+
+% \begin{thebibliography}{99}
+
+% \bibitem{Hale2020} Hale, R. C., et al., ``A global perspective on microplastics,'' \textit{J. Geophys. Res. Oceans} \textbf{125}(1), e2018JC014719 (2020).
+% \bibitem{Jambeck2015} Jambeck, J. R., et al., ``Plastic waste inputs from land into the ocean,'' \textit{Science} \textbf{347}(6223), 768--771 (2015).
+% \bibitem{RochaSantos2015} Rocha-Santos, T., and Duarte, A. C., ``A critical overview of the analytical approaches to the occurrence, the fate and the behavior of microplastics in the environment,'' \textit{TrAC Trends Anal. Chem.} \textbf{65}, 47--53 (2015).
+% \bibitem{Prata2019} Prata, J. C., et al., ``Methods for sampling and detection of microplastics in water and sediment: A critical review,'' \textit{TrAC Trends Anal. Chem.} \textbf{110}, 150--159 (2019).
+% \bibitem{Shim2017} Shim, W. J., et al., ``Identification methods in microplastic analysis: a review,'' \textit{Anal. Methods} \textbf{9}(9), 1384--1397 (2017).
+% \bibitem{Serranti2024} Serranti, S., et al., ``Efficient microplastic identification,'' \textit{Journal Name} (2024). % Update with actual journal if known
+% \bibitem{Bui2018} Bui, et al., \textit{Reference Title}, (2018). % Update with actual reference details
+
+% \end{thebibliography}
+
+\end{document}

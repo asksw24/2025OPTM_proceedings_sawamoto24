@@ -1,0 +1,32 @@
+{
+    "latex-workshop.latex.tools": [
+        {
+            "name": "latexmk_en",
+            "command": "latexmk",
+            "args": [
+                "-e",
+                "$latex=q/pdflatex %O -synctex=1 -interaction=nonstopmode -file-line-error %S/",
+                "-e",
+                "$bibtex=q/bibtex %O %S/",
+                "-e",
+                "$makeindex=q/makeindex %O -o %D %S/",
+                "-e",
+                "$dvipdf=q/dvipdf %O %S %D/",
+                "-f",
+                "-pdf",
+                "-outdir=%OUTDIR%",
+                "%DOC%"
+            ],
+            "env": {}
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "Compile SPIE (English)",
+            "tools": [
+                "latexmk_en"
+            ]
+        }
+    ],
+    "latex-workshop.view.pdf.viewer": "tab"
+}
