@@ -118,8 +118,8 @@ This allowed us to determine the optimal band configuration that minimizes imagi
 To acquire comprehensive data for spectral optimization, we used a benchtop evaluation system equipped with a broadband light source~\cite{Bui2018-hw}.
 The schematic diagram of the experimental apparatus is shown in Figure~\ref{fig:setup}.
 We used a tunable light source (MAX-303, Asahi Spectra) equipped with a broadband xenon lamp.
-The excitation wavelength was selected via a rotating filter wheel and guided to the sample through an optical fiber.
-The fluorescence emitted from the sample passed through an emission-side bandpass filter to remove scattered excitation light, and the signal was captured by a UV-sensitive camera (BU-56DUV, Bitran).
+We selected the excitation wavelength via a rotating filter wheel and guided it to the sample through an optical fiber.
+The fluorescence emitted from the sample passed through an emission-side bandpass filter to remove scattered excitation light, and a UV-sensitive camera (BU-56DUV, Bitran) captured the signal.
 
 To construct a comprehensive hyperspectral dataset, we combined excitation bandpass filters (center wavelengths: 260--380 nm) and emission bandpass filters (280--600 nm) at 20 nm intervals.
 By selecting valid combinations satisfying the Stokes shift (fluorescence wavelength $>$ excitation wavelength), we acquired a total of 98 spectral images.
@@ -136,8 +136,8 @@ By selecting valid combinations satisfying the Stokes shift (fluorescence wavele
 We used nine types of virgin resin pellets (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS), which account for the majority of global plastic production, as experimental samples.
 The size of each pellet is approximately 3--5 mm (Figure~\ref{fig:samples}a).
 While these are transparent or white under visible light and difficult to distinguish, they exhibit characteristic fluorescence intensity differences under UV excitation (Figure~\ref{fig:samples}b, c).
-To improve data acquisition efficiency, the nine types of pellets were arranged within the same field of view during imaging.
-The datasets used for model calibration and evaluation were acquired in independent imaging sessions with different geometric arrangements:
+To improve data acquisition efficiency, we arranged the nine types of pellets within the same field of view during imaging.
+We acquired the datasets used for model calibration and evaluation in independent imaging sessions with different geometric arrangements:
 
 \begin{itemize}
     \item \textbf{Calibration Set:} To cover spectral variations depending on the arrangement state and construct a robust model, we integrated images acquired in the following two configurations:
@@ -211,9 +211,11 @@ To determine the optimal subset of spectral bands, we implemented the step-wise 
 The specific procedure is as follows:
 
 \begin{enumerate}
-    \item \textbf{Ranking (Importance Calculation):} An initial RF model was trained using the pre-processed calibration set, and the importance $I_G(X_j)$ of each band was calculated. The model input included all 98 available excitation-emission pairs.
-    \item \textbf{Iterative Evaluation:} Features (bands) were added to the model one by one in descending order of calculated importance, and discrimination performance was evaluated at each step.
-    \item \textbf{Determination of Optimal Subset:} To consider the balance of the entire system rather than just specific plastics, the ``Weighted Average F1-Score of all 9 classes'' was adopted as the evaluation metric. The point where the increase in F1-score saturated with the increase in the number of bands, and the number of images was minimized, was adopted as the optimal band configuration.
+    \item \textbf{Ranking (Importance Calculation):} We trained an initial RF model using the pre-processed calibration set and calculated the importance $I_G(X_j)$ of each band.
+    The model input included all 98 available excitation-emission pairs.
+    \item \textbf{Iterative Evaluation:} We added features (bands) to the model one by one in descending order of calculated importance and evaluated discrimination performance at each step.
+    \item \textbf{Determination of Optimal Subset:} We adopted the ``Weighted Average F1-Score of all 9 classes'' as the evaluation metric to consider the balance of the entire system rather than just specific plastics.
+    We selected the optimal band configuration at the point where the increase in F1-score saturated with the increase in the number of bands, and the number of images was minimized.
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{RESULTS}
@@ -221,7 +223,7 @@ The specific procedure is as follows:
 \subsection{Optimization of Spectral Bands}
 The results of feature selection by the step-wise method using the calibration dataset are shown in Figure~\ref{fig:optimization}.
 As the number of spectral bands $k$ increased, the weighted F1-score for all 9 classes rose rapidly, exceeding 0.90 at $k=2$.
-Subsequently, the improvement in the score became gradual, and it was confirmed that the accuracy almost saturated (above 0.99) around $k=5$.
+Subsequently, the improvement in the score became gradual, and we confirmed that the accuracy almost saturated (above 0.99) around $k=5$.
 Finally, considering the trade-off between slight accuracy improvement and computational cost, we adopted the band configuration of $k=8$, which showed the highest stability, as the optimal solution.
 In this internal validation stage, the model demonstrated an extremely high precision rate.
 
@@ -237,9 +239,9 @@ In this internal validation stage, the model demonstrated an extremely high prec
 
 \subsection{Performance on External Validation Set}
 Using the selected 8 bands, we classified the external validation dataset to verify robustness against geometric variations.
-As a result, a high weighted average F1-score (comparable to the calibration phase) was maintained.
-As shown in Figure~\ref{fig:confusion}, 7 out of the 9 types were classified with extremely high precision (F1-score $\ge$ 0.98).
-The fact that similar trends were observed in the external data as in the calibration phase is evidence that the constructed model is not overfitting to specific sample arrangements or lighting conditions, but that the selected features function effectively regardless of arrangement.
+As a result, the model maintained a high weighted average F1-score (comparable to the calibration phase).
+As shown in Figure~\ref{fig:confusion}, the model classified 7 out of the 9 types with extremely high precision (F1-score $\ge$ 0.98).
+We observed similar trends in the external data as in the calibration phase, which provides evidence that the constructed model generalizes well, rather than overfitting to specific sample arrangements or lighting conditions.
 
 % \begin{figure}[ht]
 %   \centering
@@ -254,10 +256,9 @@ The fact that similar trends were observed in the external data as in the calibr
 \section{DISCUSSION}
 
 \subsection{Interpretation of Optimization Behavior}
-In the step-wise method adopted in this study, a temporary decrease in the score for specific classes (e.g., HDPE) was observed.
-This is interpreted as a class-specific trade-off resulting from the algorithm prioritizing global optimization to maximize the average performance of all classes.
-However, for the purpose of this study, which is the simultaneous screening of a wide variety of plastics, it is rational to prioritize the improvement of the system's overall average performance over slight fluctuations in specific classes.
-As a result, the selected 8 bands showed high generalization performance on the external validation set, confirming the effectiveness of this optimization strategy.
+In this study, we strategically prioritized global optimization to maximize the system's overall average performance suitable for simultaneous screening.
+Consequently, while we observed a temporary score decrease for specific classes (e.g., HDPE) due to class-specific trade-offs, the selected 8 bands achieved high generalization performance on the external validation set.
+This confirms that prioritizing the overall average over slight individual fluctuations is an effective and rational strategy for high-throughput applications.
 
 \subsection{High-Throughput Capability}
 The greatest advantage of this method is the overwhelming throughput achieved by area-scan imaging.
@@ -267,27 +268,26 @@ The experimental results demonstrate a speedup of several orders of magnitude co
 \subsection{Limitations and Potential Improvements}
 There are several limitations to this study.
 
-First, some confusion was observed between PET and HDPE (PET misclassification rate: approx. 35\%).
-Although their EEM spectral shapes are originally different, the reduction of spectral bands to prioritize data acquisition efficiency caused their feature values to become close in the selected feature space (feature overlap).
+First, we observed some confusion between PET and HDPE (PET misclassification rate: approx. 35\%).
+We attribute the root cause of this misclassification to the significant feature overlap between these classes in the reduced 8-dimensional space, despite their distinct full spectral shapes.
 
-Therefore, the root cause of the misclassification is attributable to the significant feature overlap between these classes in the reduced 8-dimensional space.
 While the current Random Forest model struggled to separate these overlapping clusters, introducing representation learning methods such as Deep Learning could potentially improve discrimination by learning more complex manifold structures.
 
 Second is the scope of direct accuracy comparison.
-Since this study focuses on throughput improvement, strict particle-to-particle comparison with conventional methods was not performed.
+Since this study focuses on throughput improvement, we did not perform strict particle-to-particle comparison with conventional methods.
 
-Third, this experiment was conducted using virgin pellets.
+Third, we conducted this experiment using virgin pellets.
 Since microplastics in actual marine environments may have altered fluorescence characteristics due to biofilm adhesion or weathering, further verification using real environmental samples is necessary.
 
 \subsection{System Design for Field Deployment}
-This study was conducted as a proof-of-principle for the future construction of a high-throughput system.
+We conducted this study as a proof-of-principle for the future construction of a high-throughput system.
 Based on the verification results, we designed a compact dedicated system for on-site implementation.
 Figure~\ref{fig:future_system} shows the block diagram of the proposed system.
-To replace the large benchtop equipment, high-power UV-LEDs were adopted as the light source.
+To replace the large benchtop equipment, we adopted high-power UV-LEDs as the light source.
 However, commercially available LEDs have a wider Full Width at Half Maximum (FWHM) compared to bandpass filters, and the selectable center wavelengths are discrete.
 Therefore, in this design, we selected a group of commercially available LEDs that approximately cover the spectral regions suggested to be effective in the benchtop experiment.
 In the future, we plan to perform re-optimization of features based on actual hardware characteristics using this compact system.
-A single-board computer (SBC, e.g., Raspberry Pi 5) will be adopted for the control system, aiming to realize a low-cost, standalone monitoring solution.
+We will adopt a single-board computer (SBC, e.g., Raspberry Pi 5) for the control system, aiming to realize a low-cost, standalone monitoring solution.
 
 \begin{figure}[ht]
   \centering
