@@ -74,15 +74,15 @@ Generally, the fluorescence intensity $F$ at an excitation wavelength $\lambda_{
 
 \begin{equation}
 \label{eq:fluorescence}
-F(\lambda_{ex}, \lambda_{em}) = K \cdot I_0(\lambda_{ex}) \cdot (1 - 10^{-\varepsilon(\lambda_{ex})cL}) \cdot \Phi(\lambda_{ex}, \lambda_{em})
+F(\lambda_{ex}, \lambda_{em}) = K \cdot I_0(\lambda_{ex}) \cdot (1 - 10^{-\varepsilon(\lambda_{ex})cL}) \cdot \Phi(\lambda_{ex}, \lambda_{em}).
 \end{equation}
 
 where $K$ is the instrument constant (geometric factors and detection efficiency), $I_0$ is the excitation light intensity, $\varepsilon$ is the molar absorption coefficient, $c$ is the concentration, $L$ is the optical path length, and $\Phi$ is the fluorescence quantum yield.
 Under the dilute solution or thin film approximation, Equation (\ref{eq:fluorescence}) becomes linear with respect to the material-intrinsic parameters $\varepsilon$ and $\Phi$.
 Since the spectral profiles of $\varepsilon$ (absorption characteristics) and $\Phi$ (emission efficiency) differ depending on the polymer type, measuring these at multiple wavelengths enables material identification.
 
-As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Tech).
-The obtained EEM spectra are shown in Figure~\ref{fig:eem}.
+As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Tech).
+The obtained EEM spectra are shown in Fig~\ref{fig:eem}.
 These results confirmed that each polymer possesses a specific fluorescence spectrum under UV excitation.
 
 \begin{figure}[ht]
@@ -104,7 +104,7 @@ In RF, the importance (Gini Importance) of a feature (wavelength band) $X_j$ is 
 
 \begin{equation}
 \label{eq:gini}
-I_G(X_j) = \frac{1}{N_T} \sum_{T} \sum_{t \in T: v(s_t) = X_j} p(t) \Delta i(s_t, t)
+I_G(X_j) = \frac{1}{N_T} \sum_{T} \sum_{t \in T: v(s_t) = X_j} p(t) \Delta i(s_t, t).
 \end{equation}
 
 where $N_T$ is the total number of trees constituting the forest, $v(s_t)$ is the variable used for splitting at node $t$, $p(t)$ is the proportion of samples reaching node $t$, and $\Delta i(s_t, t)$ indicates the Gini Impurity Decrease due to the split.
@@ -116,7 +116,7 @@ This allowed us to determine the optimal band configuration that minimizes imagi
 
 \subsection{Optical Configuration}
 To acquire comprehensive data for spectral optimization, we used a benchtop evaluation system equipped with a broadband light source~\cite{Bui2018-hw}.
-The schematic diagram of the experimental apparatus is shown in Figure~\ref{fig:setup}.
+The schematic diagram of the experimental apparatus is shown in Fig~\ref{fig:setup}.
 We used a tunable light source (MAX-303, Asahi Spectra) equipped with a broadband xenon lamp.
 We selected the excitation wavelength via a rotating filter wheel and guided it to the sample through an optical fiber.
 The fluorescence emitted from the sample passed through an emission-side bandpass filter to remove scattered excitation light, and a UV-sensitive camera (BU-56DUV, Bitran) captured the signal.
@@ -134,8 +134,8 @@ By selecting valid combinations satisfying the Stokes shift (fluorescence wavele
 
 \subsection{Samples and Data Acquisition}
 We used nine types of virgin resin pellets (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS), which account for the majority of global plastic production, as experimental samples.
-The size of each pellet is approximately 3--5 mm (Figure~\ref{fig:samples}a).
-While these are transparent or white under visible light and difficult to distinguish, they exhibit characteristic fluorescence intensity differences under UV excitation (Figure~\ref{fig:samples}b, c).
+The size of each pellet is approximately 3--5 mm (Fig~\ref{fig:samples}(a)).
+While these are transparent or white under visible light and difficult to distinguish, they exhibit characteristic fluorescence intensity differences under UV excitation (Fig~\ref{fig:samples}(b), (c)).
 To improve data acquisition efficiency, we arranged the nine types of pellets within the same field of view during imaging.
 We acquired the datasets used for model calibration and evaluation in independent imaging sessions with different geometric arrangements:
 
@@ -201,57 +201,113 @@ Therefore, in this study, to achieve robust identification based solely on the p
 
 \begin{equation}
 \label{eq:preprocessing}
-\mathbf{x}' = \frac{\mathbf{x} - \min(\mathbf{x})}{\|\mathbf{x} - \min(\mathbf{x})\|_2}
+\mathbf{x}' = \frac{\mathbf{x} - \min(\mathbf{x})}{\|\mathbf{x} - \min(\mathbf{x})\|_2}.
 \end{equation}
 
 This process generates a normalized feature vector $\mathbf{x}'$ that is independent of lighting conditions and sample arrangement.
 
 \subsection{Feature Selection Strategy}
-To determine the optimal subset of spectral bands, we implemented the step-wise method based on the Random Forest Gini Importance described in Section 2.2.
+To determine the optimal subset of spectral bands, we implemented a stepwise method based on the Random Forest Gini Importance described in Section 2.2.
 The specific procedure is as follows:
 
 \begin{enumerate}
-    \item \textbf{Ranking (Importance Calculation):} We trained an initial RF model using the pre-processed calibration set and calculated the importance $I_G(X_j)$ of each band.
-    The model input included all 98 available excitation-emission pairs.
-    \item \textbf{Iterative Evaluation:} We added features (bands) to the model one by one in descending order of calculated importance and evaluated discrimination performance at each step.
-    \item \textbf{Determination of Optimal Subset:} We adopted the ``Weighted Average F1-Score of all 9 classes'' as the evaluation metric to consider the balance of the entire system rather than just specific plastics.
-    We selected the optimal band configuration at the point where the increase in F1-score saturated with the increase in the number of bands, and the number of images was minimized.
+    \item \textbf{Ranking and Stability Analysis:}
+    Instead of a single calculation, we conducted a stability analysis using a 10-fold cross-validation scheme on the calibration set.
+    In each fold, we calculated the feature importance $I_G(X_j)$ and recorded the top-ranked bands.
+    We defined the selection frequency as the number of times a band appeared in the top 10 across the 10 folds.
+    The final ranking was determined based on this frequency to ensure robustness against data variations.
+
+    \item \textbf{Iterative Evaluation:}
+    We sequentially added spectral bands to the model in descending order of the determined robust ranking.
+    At each step, with the number of features $k$ ranging from 1 to 10, we evaluated the discrimination performance using the Weighted Average F1-Score.
+
+    \item \textbf{Determination of Optimal Subset:}
+    We adopted the Weighted Average F1-Score of all 9 classes as the evaluation metric.
+    The optimal number of bands $k$ was determined by identifying the point where the accuracy saturated in the internal validation and reached its peak in the external validation.
+    This approach minimizes the number of required images while maximizing the generalization capability.
 \end{enumerate}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{RESULTS}
 
 \subsection{Optimization of Spectral Bands}
-The results of feature selection by the step-wise method using the calibration dataset are shown in Figure~\ref{fig:optimization}.
-As the number of spectral bands $k$ increased, the weighted F1-score for all 9 classes rose rapidly, exceeding 0.90 at $k=2$.
-Subsequently, the improvement in the score became gradual, and we confirmed that the accuracy almost saturated (above 0.99) around $k=5$.
-Finally, considering the trade-off between slight accuracy improvement and computational cost, we adopted the band configuration of $k=8$, which showed the highest stability, as the optimal solution.
+The results of feature selection by the step-wise method using the calibration dataset are shown in Fig~\ref{fig:feature_selection_results}(a).
+As the number of spectral bands $k$ increased, the Weighted Average F1-Score for all 9 classes rose rapidly, exceeding 0.90 at $k=2$.
+Subsequently, the improvement in the score became gradual, and we confirmed that the accuracy reached a saturation level (approx. 0.96) around $k=5$.
+Although a slight increase was observed up to $k=8$, the marginal gain was negligible considering the trade-off with computational cost and data volume.
+Therefore, the internal validation suggested that a compact subset of approximately 5 bands captures the majority of the spectral features required for classification.
 In this internal validation stage, the model demonstrated an extremely high precision rate.
 
-% \begin{figure}[ht]
-%   \centering
-%   % Figure placeholder - Replace with actual file name
-%   \includegraphics[width=0.7\linewidth]{figures/fig3_optimization.png}
-%   \caption{Relationship between the number of features (bands) and classification accuracy (Weighted F1-Score) on the calibration set.
-%   The weighted F1-score saturates around $k=5$, indicating that a small subset of bands is sufficient for classification.
-%   We selected $k=8$ as the optimal subset to ensure robustness.
-%   \label{fig:optimization}}
-% \end{figure}
+\begin{figure}[htbp]
+  \centering
+  % (a) Optimization Curve
+  \begin{minipage}[b]{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/paper_figure_optimization_curve_clean.jpg}
+    \subcaption{Optimization curve (Internal Validation).}
+    \label{fig:optimization_curve}
+  \end{minipage}
+  \hfill
+  % (b) Stability
+  \begin{minipage}[b]{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/paper_figure_stability_horizontal.jpg}
+    \subcaption{Feature stability analysis.}
+    \label{fig:stability}
+  \end{minipage}
 
-\subsection{Performance on External Validation Set}
-Using the selected 8 bands, we classified the external validation dataset to verify robustness against geometric variations.
-As a result, the model maintained a high weighted average F1-score (comparable to the calibration phase).
-As shown in Figure~\ref{fig:confusion}, the model classified 7 out of the 9 types with extremely high precision (F1-score $\ge$ 0.98).
-We observed similar trends in the external data as in the calibration phase, which provides evidence that the constructed model generalizes well, rather than overfitting to specific sample arrangements or lighting conditions.
+  \caption{Results of the feature selection process.
+  (a) The relationship between the number of features $k$ (x-axis) and the Macro Average F1-Score (y-axis). Error bars represent standard deviation.
+  (b) The selection frequency of specific wavelength bands across 10-fold cross-validation. The x-axis indicates the number of times each band was selected in the top-10 rankings.
+  \label{fig:feature_selection_results}}
+\end{figure}
 
-% \begin{figure}[ht]
-%   \centering
-%   % Figure placeholder - Replace with actual file name
-%   \includegraphics[width=0.7\linewidth]{figures/fig4_confusion_matrix.png}
-%   \caption{Confusion matrix evaluated on the external validation dataset using the selected 8 bands.
-%   The diagonal elements represent the recall for each polymer class.
-%   Most classes show high classification accuracy, demonstrating the robustness of the proposed spectral features against sample arrangement (Dispersed Arrangement).
-%   \label{fig:confusion}}
-% \end{figure}
+
+
+\subsection{Generalization Performance on External Validation Set}
+We validated the generalization capability of the selected subsets using the external validation dataset acquired independently from the training data.
+Figure~\ref{fig:external_validation} illustrates the Weighted Average F1-Score on the external set.
+Contrasting with the internal validation, the performance peaked at $k=5$ with an F1-score of 0.9171.
+Notably, this peak score slightly outperformed the baseline score of 0.916 obtained using the full spectrum of 98 bands.
+Furthermore, adding features beyond $k=5$ caused a decrease in accuracy, with the F1-score dropping to 0.880 at $k=10$.
+This phenomenon suggests that the lower-ranked features contain environmental noise or redundant information that hinders generalization.
+Therefore, we concluded that $k=5$ is the optimal cutoff for this system.
+
+To further investigate the classification behavior, we analyzed the performance of each individual polymer class.
+Figure~\ref{fig:classwise_performance} presents the F1-score transition for each of the 9 classes.
+We observed distinct behaviors depending on the material type:
+\begin{itemize}
+    \item \textbf{Early Saturation:} Polymers such as ABS, LDPE, and PVC reached high accuracy exceeding 0.9 with only 1 or 2 bands. This indicates that these materials possess distinct spectral features that are easy to isolate.
+    \item \textbf{Peak and Drop:} Difficult-to-classify polymers, specifically HDPE and PET, showed a clear peak around $k=3$ to $5$. For these materials, the selected subset outperformed the full-spectrum baseline (indicated by the gray dashed line). This confirms that feature selection effectively removed confounding spectral noise, thereby improving identification accuracy for chemically similar plastics.
+    \item \textbf{Complex Features:} PMMA required more bands to approach the baseline accuracy; however, the system maintained a practical classification performance across all 9 classes using the optimized subset.
+\end{itemize}
+
+% --- 図の配置 ---
+
+% 全体スコアの図
+\begin{figure}[htbp]
+  \centering
+  % ファイル名は適宜変更してください
+  \includegraphics[width=0.7\linewidth]{figures/external_validation_academic.jpg}
+  \caption{Generalization performance on the external validation dataset.
+  The black solid line shows the Weighted Average F1-Score of the proposed method.
+  The red dashed line marks the optimal cutoff at $k=5$.
+  The gray dashed line indicates the baseline performance using the full spectrum (98 bands).
+  \label{fig:external_validation}}
+\end{figure}
+
+% ★ここが今回追加する「クラス別」の図です
+\begin{figure}[htbp]
+  \centering
+  % ファイル名は適宜変更してください
+  \includegraphics[width=0.95\linewidth]{figures/external_validation_classwise_academic_with_line.jpg}
+  \caption{Class-wise classification performance versus the number of features $k$.
+  The vertical red dashed line indicates the system-wide optimal cutoff ($k=5$).
+  The gray dashed line represents the baseline F1-score for each class using the full spectrum.
+  Note that for HDPE and PET, the selected subset outperforms the full-spectrum baseline, demonstrating the noise-reduction effect of the proposed method.
+  \label{fig:classwise_performance}}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DISCUSSION}
 
