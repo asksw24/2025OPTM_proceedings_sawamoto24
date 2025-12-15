@@ -44,25 +44,25 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  The widespread contamination of microplastics (MPs) necessitates comprehensive monitoring across various environments. However, standard analytical methods like FTIR and Raman spectroscopy are time-consuming and resource-intensive, limiting their applicability for high-throughput screening. To address this challenge, we propose a rapid multispectral imaging method based on polymer auto-fluorescence under UV excitation. Leveraging the distinct fingerprints observed in Excitation-Emission Matrices (EEMs), our approach optimizes spectral acquisition by selecting a minimal subset of effective wavelength bands rather than measuring the full spectrum. Using a Random Forest-based feature selection, we demonstrated that only 8 spectral bands are sufficient to classify 9 representative types of virgin polymers with an average accuracy of 89\%. This significant reduction in spectral dimensionality enables the design of simplified hardware using commercially available UV-LEDs, offering a practical and accessible solution for high-throughput MP monitoring.
+  The widespread contamination of microplastics (MPs) necessitates comprehensive monitoring across various environments. However, standard analytical methods, such as FTIR and Raman spectroscopy, are time-consuming and resource-intensive, limiting their utility for high-throughput screening. Here, we propose a rapid multispectral imaging method using polymer auto-fluorescence under UV excitation. Leveraging the distinct fingerprints observed in Excitation-Emission Matrices (EEMs), our approach optimizes spectral acquisition by selecting a minimal subset of effective spectral bands rather than measuring the full sets of spectra in the EEM. Using a Random Forest-based feature selection, we demonstrated that only 8 spectral bands are sufficient to classify 9 representative virgin polymers with an average accuracy of 89\%. This significant reduction in spectral dimensionality facilitates the design of simplified hardware using commercially available UV-LEDs, offering a practical and accessible solution for high-throughput MP monitoring.
 \end{abstract}
 
 \keywords{Microplastics, Multispectral fluorescence imaging, UV excitation, High-throughput screening, Spectral optimization, Excitation-emission matrix}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
-The widespread accumulation of microplastics (MPs) in the natural environment has become an increasingly serious international issue~\cite{Hale2020-sc, Jambeck2015-yz}.
-To understand the actual state of MP pollution and identify its sources, it is necessary to comprehensively quantify the distribution and flux of MPs across various media~\cite{Rocha-Santos2015-ph}.
-To track pollution sources and environmental behavior, identifying the specific material type (e.g., polyethylene (PE) from packaging or polyethylene terephthalate (PET) from bottles) for every single sample collected in field surveys is essential~\cite{Hidalgo-Ruz2012-wx}.
+The widespread accumulation of microplastics (MPs) in the natural environment is an increasingly serious international issue~\cite{Hale2020-sc, Jambeck2015-yz}.
+Understanding MP pollution sources and dynamics requires comprehensively quantifying their distribution and flux across various media~\cite{Rocha-Santos2015-ph}.
+Specifically, tracking pollution sources and environmental behavior, identifying the specific material type, such as polyethylene (PE) from packaging vs. polyethylene terephthalate (PET) from bottles, of every single sample collected in field surveys is essential~\cite{Hidalgo-Ruz2012-wx}.
 
 However, while conventional analytical methods such as Fourier Transform Infrared Spectroscopy (FTIR) and Raman spectroscopy excel at identifying the chemical structure of MPs, they rely on point-scanning, which requires an enormous amount of time for analysis~\cite{Prata2019-kt, Shim2017-kb}.
 Consequently, comprehensive chemical profiling of the vast amounts of MPs in the environment is virtually impossible within a realistic timeframe.
-Therefore, for in-process applications, there is a strong demand for the development of high-throughput solutions that achieve both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}.
+Therefore, for in-process applications, there is a strong demand for high-throughput solutions that achieve both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}.
 
 In this study, we propose a multispectral imaging method specialized for polymer identification based on the Excitation-Emission Matrix (EEM).
-This method utilizes the inherent auto-fluorescence emitted by polymers under UV excitation to capture the spectral features necessary for classification as images.
-First, toward the future construction of a high-throughput system, we conducted a feasibility study using a benchtop system equipped with a broadband light source.
-Furthermore, we identified a combination of wavelength bands that minimizes measurement time while maintaining classification accuracy.
+By utilizing inherent polymer auto-fluorescence under UV excitation, we capture essential spectral features as images.
+We first, toward the future construction of a high-throughput system, we conducted a feasibility study using a benchtop system equipped with a broadband light source.
+Furthermore, we identified a combination of spectral bands that minimizes measurement time while maintaining classification accuracy.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{PRINCIPLE}
 
@@ -78,7 +78,7 @@ F(\lambda_{ex}, \lambda_{em}) = K \cdot I_0(\lambda_{ex}) \cdot (1 - 10^{-\varep
 \end{equation}
 
 where $K$ is the instrument constant (geometric factors and detection efficiency), $I_0$ is the excitation light intensity, $\varepsilon$ is the molar absorption coefficient, $c$ is the concentration, $L$ is the optical path length, and $\Phi$ is the fluorescence quantum yield.
-In the dilute solution approximation or thin film approximation, Equation (\ref{eq:fluorescence}) can be considered linear with respect to the material-intrinsic parameters $\varepsilon$ and $\Phi$.
+Under the dilute solution or thin film approximation, Equation (\ref{eq:fluorescence}) becomes linear with respect to the material-intrinsic parameters $\varepsilon$ and $\Phi$.
 Since the spectral profiles of $\varepsilon$ (absorption characteristics) and $\Phi$ (emission efficiency) differ depending on the polymer type, measuring these at multiple wavelengths enables material identification.
 
 As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Tech).
@@ -97,7 +97,7 @@ These results confirmed that each polymer possesses a specific fluorescence spec
 
 \subsection{Data-Driven Band Selection}
 While high-dimensional data such as EEMs are essential for accurate polymer classification, acquiring and processing the full hyperspectral datacube is inefficient for real-time applications due to the massive data volume and spectral redundancy.
-Therefore, an approach is needed to selectively acquire only the minimal wavelength bands that have a high contribution to discrimination.
+Therefore, an approach is needed to selectively acquire only the minimal spectral bands that have a high contribution to discrimination.
 However, since spectral data possess strong correlations between bands and contain non-linear relationships, it is difficult to determine the optimal subset using simple linear models.
 In this study, we employed Random Forest (RF), which can account for non-linear interactions between features.
 In RF, the importance (Gini Importance) of a feature (wavelength band) $X_j$ is defined as the sum of the decrease in impurity at the nodes where that feature was used for splitting, as shown in the following equation:
@@ -133,7 +133,7 @@ By selecting valid combinations satisfying the Stokes shift (fluorescence wavele
 \end{figure}
 
 \subsection{Samples and Data Acquisition}
-We used nine types of virgin resin pellets (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, ABS), which account for the majority of global plastic production, as experimental samples.
+We used nine types of virgin resin pellets (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS), which account for the majority of global plastic production, as experimental samples.
 The size of each pellet is approximately 3--5 mm (Figure~\ref{fig:samples}a).
 While these are transparent or white under visible light and difficult to distinguish, they exhibit characteristic fluorescence intensity differences under UV excitation (Figure~\ref{fig:samples}b, c).
 To improve data acquisition efficiency, the nine types of pellets were arranged within the same field of view during imaging.
@@ -207,7 +207,7 @@ Therefore, in this study, to achieve robust identification based solely on the p
 This process generates a normalized feature vector $\mathbf{x}'$ that is independent of lighting conditions and sample arrangement.
 
 \subsection{Feature Selection Strategy}
-To determine the optimal subset of wavelength bands, we implemented the step-wise method based on the Random Forest Gini Importance described in Section 2.2.
+To determine the optimal subset of spectral bands, we implemented the step-wise method based on the Random Forest Gini Importance described in Section 2.2.
 The specific procedure is as follows:
 
 \begin{enumerate}
@@ -220,7 +220,7 @@ The specific procedure is as follows:
 
 \subsection{Optimization of Spectral Bands}
 The results of feature selection by the step-wise method using the calibration dataset are shown in Figure~\ref{fig:optimization}.
-As the number of wavelength bands $k$ increased, the weighted F1-score for all 9 classes rose rapidly, exceeding 0.90 at $k=2$.
+As the number of spectral bands $k$ increased, the weighted F1-score for all 9 classes rose rapidly, exceeding 0.90 at $k=2$.
 Subsequently, the improvement in the score became gradual, and it was confirmed that the accuracy almost saturated (above 0.99) around $k=5$.
 Finally, considering the trade-off between slight accuracy improvement and computational cost, we adopted the band configuration of $k=8$, which showed the highest stability, as the optimal solution.
 In this internal validation stage, the model demonstrated an extremely high precision rate.
@@ -268,7 +268,7 @@ The experimental results demonstrate a speedup of several orders of magnitude co
 There are several limitations to this study.
 
 First, some confusion was observed between PET and HDPE (PET misclassification rate: approx. 35\%).
-Although their EEM spectral shapes are originally different, the reduction of wavelength bands to prioritize data acquisition efficiency caused their feature values to become close in the selected feature space (feature overlap).
+Although their EEM spectral shapes are originally different, the reduction of spectral bands to prioritize data acquisition efficiency caused their feature values to become close in the selected feature space (feature overlap).
 
 Therefore, the root cause of the misclassification is attributable to the significant feature overlap between these classes in the reduced 8-dimensional space.
 While the current Random Forest model struggled to separate these overlapping clusters, introducing representation learning methods such as Deep Learning could potentially improve discrimination by learning more complex manifold structures.
@@ -300,7 +300,7 @@ A single-board computer (SBC, e.g., Raspberry Pi 5) will be adopted for the cont
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{CONCLUSION}
 In this study, we demonstrated the feasibility of a high-throughput microplastic identification method using UV excitation fluorescence imaging.
-Through band selection using the step-wise method, we revealed that an average classification accuracy of 89\% can be obtained with only 8 wavelength bands.
+Through band selection using the step-wise method, we revealed that an average classification accuracy of 89\% can be obtained with only 8 spectral bands.
 The proposed method achieves significantly higher throughput compared to conventional methods and demonstrates high industrial practicality.
 Based on these findings, we also proposed a design for a compact standalone system using UV-LEDs.
 In the future, we will focus on the construction of this dedicated hardware and demonstration experiments using real marine samples.
