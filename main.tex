@@ -238,11 +238,9 @@ The specific procedure is as follows:
 
 \subsection{Optimization of Spectral Bands}
 The results of feature selection by the step-wise method using the calibration dataset are shown in Fig~\ref{fig:feature_selection_results}(a).
-As the number of spectral bands $k$ increased, the Weighted Average F1-Score for all 9 classes rose rapidly, exceeding 0.90 at $k=2$.
-The score improvement subsequently plateaued, and, with the accuracy reached a saturation level (approx. 0.96) around $k=5$.
-Although a slight increase was observed up to $k=8$, the marginal gain was negligible considering the trade-off with computational cost and data volume.
-Therefore, the internal validation suggested that a compact subset of approximately 5 bands captures the majority of the spectral features required for classification.
-In this internal validation stage, the model demonstrated an extremely high precision rate.
+As the number of spectral bands $k$ increased, the Weighted Average F1-Score for all 9 classes rose rapidly, exceeding 0.95 at $k=5$.
+The score improvement subsequently plateaued, and, with the accuracy reached a saturation level (approx. 0.99) around $k=11$.
+Fig~\ref{fig:feature_selection_results}(b) shows the selection frequency of each spectral band obtained through 10-fold cross-validation. We observed that the top five bands were selected in more than 7 out of 10 folds.
 
 \begin{figure}[htbp]
   \centering
@@ -250,7 +248,7 @@ In this internal validation stage, the model demonstrated an extremely high prec
   \begin{minipage}[b]{0.48\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/paper_figure_optimization_curve_clean.jpg}
-    \subcaption{Optimization curve (Internal Validation).}
+    \subcaption{F1-Score vs. Number of bands $k$.}
     \label{fig:optimization_curve}
   \end{minipage}
   \hfill
@@ -258,13 +256,13 @@ In this internal validation stage, the model demonstrated an extremely high prec
   \begin{minipage}[b]{0.48\linewidth}
     \centering-
     \includegraphics[width=\linewidth]{figures/paper_figure_stability_horizontal.jpg}
-    \subcaption{Feature stability analysis.}
+    \subcaption{Band selection frequency.}
     \label{fig:stability}
   \end{minipage}
 
-  \caption{Results of the feature selection process.
-  (a) The relationship between the number of features $k$ (x-axis) and the Macro Average F1-Score (y-axis). Error bars represent standard deviation.
-  (b) The selection frequency of specific wavelength bands across 10-fold cross-validation. The x-axis indicates the number of times each band was selected in the top-10 rankings.
+  \caption{Results of the feature selection.
+    (a) Dependence of the Weighted Average F1-Score (y-axis) on the number of spectral bands $k$ (x-axis). Error bars represent standard deviation.
+    (b) Selection frequency (x-axis) of each spectral band (y-axis) during 10-fold cross-validation.
   \label{fig:feature_selection_results}}
 \end{figure}
 
@@ -276,7 +274,7 @@ Fig~\ref{fig:external_validation} illustrates the Weighted Average F1-Score on t
 Contrasting with the internal validation, the performance peaked at $k=5$ with an F1-score of 0.9171.
 Notably, this peak score slightly outperformed the baseline score of 0.916 obtained using the full spectrum of 98 bands.
 Furthermore, adding features beyond $k=5$ caused a decrease in accuracy, with the F1-score dropping to 0.880 at $k=10$.
-This phenomenon suggests that the lower-ranked features contain environmental noise or redundant information that hinders generalization.
+% This phenomenon suggests that the lower-ranked features contain environmental noise or redundant information that hinders generalization.
 Therefore, we concluded that $k=5$ is the optimal cutoff for this system.
 
 To further investigate how the model distinguishes between polymers
@@ -284,10 +282,21 @@ To further investigate how the model distinguishes between polymers
 Fig~\ref{fig:classwise_performance} presents the F1-score transition for each of the 9 classes.
 We observed distinct behaviors depending on the material type:
 \begin{itemize}
-    \item \textbf{Early Saturation:} Polymers such as ABS, LDPE, and PVC reached high accuracy exceeding 0.9 with only 1 or 2 bands. This indicates that these materials possess distinct spectral features that are easy to isolate.
-    \item \textbf{Peak and Drop:} Difficult-to-classify polymers, specifically HDPE and PET, showed a clear peak around $k=3$ to $5$. For these materials, the selected subset outperformed the full-spectrum baseline (indicated by the gray dashed line). This confirms that feature selection effectively removed confounding spectral noise, thereby improving identification accuracy for chemically similar plastics.
-    \item \textbf{Complex Features:} PMMA required more bands to approach the baseline accuracy; however, the system maintained a practical classification performance across all 9 classes using the optimized subset.
+    \item \textbf{Early Saturation:} Polymers such as ABS and PVC reached high accuracy exceeding 0.9 with only 1 band.
+    Additionally, PC, PP, and PS demonstrated rapid convergence, reaching their baseline performance levels at $k=5$.
+    % This indicates that these materials possess distinct spectral features that are easy to isolate.
+    \item \textbf{Peak and Drop:}
+    HDPE and PET showed a clear peak around $k=3$ to $5$. Notably, for these materials, the F1-scores of the selected subset were higher than the full-spectrum baseline.
+    % This confirms that feature selection effectively removed confounding spectral noise, thereby improving identification accuracy for chemically similar plastics.
+    \item \textbf{Slow Saturation:} PMMA and LDPE exhibited a slower convergence to the baseline accuracy compared to other materials.
+    % ; however, the system maintained a practical classification performance across all 9 classes using the optimized subset.
 \end{itemize}
+
+Fig~\ref{fig:confusion_matrix}  presents the confusion matrix obtained with the optimal subset of $k=5$.
+The model achieved perfect classification (a recall of 1.00) for ABS, PS, and PVC.
+In contrast, mutual confusion was observed between PET and HDPE.
+Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of HDPE samples as PET.
+% This suggests a spectral similarity between these two polymers in the selected bands.
 
 % --- 図の配置 ---
 
@@ -297,9 +306,8 @@ We observed distinct behaviors depending on the material type:
   % ファイル名は適宜変更してください
   \includegraphics[width=0.7\linewidth]{figures/external_validation_academic.jpg}
   \caption{Generalization performance on the external validation dataset.
-  The black solid line shows the Weighted Average F1-Score of the proposed method.
-  The red dashed line marks the optimal cutoff at $k=5$.
-  The gray dashed line indicates the baseline performance using the full spectrum (98 bands).
+  Dependence of the Weighted Average F1-Score (y-axis) on the number of features $k$ (x-axis).
+  The black solid line shows the proposed method, the gray dashed line indicates the full-spectrum baseline (98 bands), and the red dashed line marks the optimal cutoff at $k=5$.
   \label{fig:external_validation}}
 \end{figure}
 
@@ -308,24 +316,22 @@ We observed distinct behaviors depending on the material type:
   \centering
   % ファイル名は適宜変更してください
   \includegraphics[width=0.95\linewidth]{figures/external_validation_classwise_academic_with_line.jpg}
-  \caption{Class-wise classification performance versus the number of features $k$.
-  The vertical red dashed line indicates the system-wide optimal cutoff ($k=5$).
-  The gray dashed line represents the baseline F1-score for each class using the full spectrum.
-  Note that for HDPE and PET, the selected subset outperforms the full-spectrum baseline, demonstrating the noise-reduction effect of the proposed method.
+  \caption{Class-wise classification performance.
+  F1-Score (y-axis) versus the number of features $k$ (x-axis) for each material. The vertical red dashed line indicates the system-wide optimal cutoff ($k=5$), and the gray dashed line represents the full-spectrum baseline.
   \label{fig:classwise_performance}}
 \end{figure}
 
-% % 混同行列の図を追加
-% \begin{figure}[htbp]
-%   \centering
-%   % アップロードされた画像を "figures/" フォルダに入れて指定してください
-%   \includegraphics[width=0.7\linewidth]{figures/confusion_matrix.png}
+% 混同行列の図を追加
+\begin{figure}[htbp]
+  \centering
+  % アップロードされた画像を "figures/" フォルダに入れて指定してください
+  \includegraphics[width=0.7\linewidth]{figures/confusion_matrix.jpg}
 
-%   \caption{Normalized confusion matrix evaluated on the external validation dataset ($k=5$).
-%   The diagonal elements represent the classification accuracy (Recall) for each class.
-%   A distinct confusion is observed between HDPE and PET (True PET is misclassified as HDPE in 35\% of cases), highlighting the spectral similarity between these polymers.
-%   \label{fig:confusion_matrix}}
-% \end{figure}
+  \caption{Normalized confusion matrix evaluated on the external validation dataset ($k=5$).
+  The diagonal elements represent the classification accuracy (Recall) for each class.
+  A distinct confusion is observed between HDPE and PET (True PET is misclassified as HDPE in 35\% of cases), highlighting the spectral similarity between these polymers.
+  \label{fig:confusion_matrix}}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DISCUSSION}
