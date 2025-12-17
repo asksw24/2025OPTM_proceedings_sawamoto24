@@ -61,25 +61,28 @@ However, while conventional analytical methods such as Fourier Transform Infrare
 Consequently, comprehensive chemical profiling of the vast amounts of MPs in the environment is virtually impossible within a realistic timeframe.
 Therefore, for in-process applications, there is a strong demand for high-throughput solutions that achieve both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}.
 
+Excitation-Emission Matrix (EEM) spectroscopy enables the non-destructive characterization of chemical compositions.
+When coupled with supervised machine learning algorithms, it facilitates the robust classification of complex environmental samples~\cite{Hall2007-fl}.
+Furthermore, our research group has extended this approach to fluorescence imaging, demonstrating that EEM analysis can be effectively utilized to visualize the spatial distribution of chemical properties in biological samples~\cite{Bui2018-hw}.
 In this study, we propose a multispectral imaging method specialized for polymer identification based on the Excitation-Emission Matrix (EEM).
 By utilizing inherent polymer auto-fluorescence under UV excitation, we capture essential spectral features as images.
-We first, toward the future construction of a high-throughput system, we conducted a feasibility study using a benchtop system equipped with a broadband light source.
+To begin with, toward the future construction of a high-throughput system, we conducted a feasibility study using a benchtop system equipped with a broadband light source.
 Furthermore, we identified a combination of spectral bands that minimizes measurement time while maintaining classification accuracy.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{PRINCIPLE}
 
 \subsection{Fluorescence Characteristics}
-Most petroleum-based synthetic polymers emit specific auto-fluorescence under ultraviolet (UV) excitation due to their chemical structures, such as electron conjugated systems, and additives.
-This fluorescence characteristic depends on the Excitation-Emission Matrix (EEM) and serves as a unique fingerprint for each resin type.
+Most petroleum-based synthetic polymers emit specific auto-fluorescence under ultraviolet (UV) excitation due to their chemical structures, such as electron conjugated systems, and additives~\cite{Lakowicz2006-dj}.
+This fluorescence characteristic depends on the Excitation-Emission Matrix (EEM) and serves as a unique fingerprint for each polymer type.
 In this study, we utilize these EEM characteristics as the physical basis for MP classification.
 Generally, the fluorescence intensity $F$ at an excitation wavelength $\lambda_{ex}$ and an emission wavelength $\lambda_{em}$ is described by the following simplified model:
 
 \begin{equation}
-\label{eq:fluorescence}
-F(\lambda_{ex}, \lambda_{em}) = K \cdot I_0(\lambda_{ex}) \cdot (1 - 10^{-\varepsilon(\lambda_{ex})cL}) \cdot \Phi(\lambda_{ex}, \lambda_{em}).
+  \label{eq:fluorescence}
+  F(\lambda_{\mathrm{ex}}, \lambda_{\mathrm{em}}) = K \cdot I_0(\lambda_{\mathrm{ex}}) \cdot (1 - 10^{-\varepsilon(\lambda_{\mathrm{ex}})cL}) \cdot \Phi(\lambda_{\mathrm{ex}}, \lambda_{\mathrm{em}}),
 \end{equation}
 
-where $K$ is the instrument constant (geometric factors and detection efficiency), $I_0$ is the excitation light intensity, $\varepsilon$ is the molar absorption coefficient, $c$ is the concentration, $L$ is the optical path length, and $\Phi$ is the fluorescence quantum yield.
+\noindent where $K$ is the instrument constant (geometric factors and detection efficiency), $I_0$ is the excitation light intensity, $\varepsilon$ is the molar absorption coefficient, $c$ is the concentration, $L$ is the optical path length, and $\Phi$ is the fluorescence quantum yield.
 Under the dilute solution or thin film approximation, Equation (\ref{eq:fluorescence}) becomes linear with respect to the material-intrinsic parameters $\varepsilon$ and $\Phi$.
 Since the spectral profiles of $\varepsilon$ (absorption characteristics) and $\Phi$ (emission efficiency) differ depending on the polymer type, measuring these at multiple wavelengths enables material identification.
 
@@ -90,9 +93,10 @@ These results confirmed that each polymer possesses a specific fluorescence spec
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.95\linewidth]{figures/EEM.jpg}
-  \caption{Excitation-Emission Matrices (EEMs) of the nine types of virgin polymer pellets used in this study.
-  The contour plots represent the fluorescence intensity [a.u.], with resin names indicated above each plot.
-  The distinct spectral patterns (fingerprints) observed for each polymer type demonstrate the feasibility of classification based on UV-excited fluorescence.
+  \caption{Measured Excitation-Emission Matrices (EEMs) of the nine types of virgin polymer pellets used in this study.
+  The contour plots represent the fluorescence intensity [a.u.] at excitation and emission wavelengths [nm] for each polymer sample.
+  The distinct spectral patterns (fingerprints) observed for each polymer type demonstrate the feasibility of proposed classification method
+  based on UV-excited fluorescence.
   Note: The diagonal regions corresponding to Rayleigh and Raman scattering have been computationally removed to enhance the visibility of fluorescence features.
   \label{fig:eem}}
 \end{figure}
@@ -102,14 +106,14 @@ While high-dimensional data such as EEMs are essential for accurate polymer clas
 Therefore, an approach is needed to selectively acquire only the minimal spectral bands that have a high contribution to discrimination.
 However, since spectral data possess strong correlations between bands and contain non-linear relationships, it is difficult to determine the optimal subset using simple linear models.
 In this study, we employed Random Forest (RF), which can account for non-linear interactions between features.
-In RF, the importance (Gini Importance) of a feature (wavelength band) $X_j$ is defined as the sum of the decrease in impurity at the nodes where that feature was used for splitting, as shown in the following equation:
+In RF, the importance (Gini Importance) of a feature (spectral bands) $X_j$ is defined as the sum of the decrease in impurity at the nodes where that feature was used for splitting, as shown in the following equation:
 
 \begin{equation}
-\label{eq:gini}
-I_G(X_j) = \frac{1}{N_T} \sum_{T} \sum_{t \in T: v(s_t) = X_j} p(t) \Delta i(s_t, t).
+  \label{eq:gini}
+  I_{\mathrm{G}}(X_j) = \frac{1}{N_{\mathrm{T}}} \sum_{T} \sum_{t \in T: v(s_t) = X_j} p(t) \Delta i(s_t, t),
 \end{equation}
 
-where $N_T$ is the total number of trees constituting the forest, $v(s_t)$ is the variable used for splitting at node $t$, $p(t)$ is the proportion of samples reaching node $t$, and $\Delta i(s_t, t)$ indicates the Gini Impurity Decrease due to the split.
+\noindent where $N_T$ is the total number of trees constituting the forest, $v(s_t)$ is the variable used for splitting at node $t$, $p(t)$ is the proportion of samples reaching node $t$, and $\Delta i(s_t, t)$ indicates the Gini Impurity Decrease due to the split.
 Based on this $I_G(X_j)$, we applied a step-wise method in which bands with high importance are sequentially added and evaluated.
 This allowed us to determine the optimal band configuration that minimizes imaging time while maintaining classification accuracy.
 
@@ -119,9 +123,9 @@ This allowed us to determine the optimal band configuration that minimizes imagi
 \subsection{Optical Configuration}
 To acquire comprehensive data for spectral optimization, we used a benchtop evaluation system equipped with a broadband light source~\cite{Bui2018-hw}.
 The schematic diagram of the experimental apparatus is shown in Fig~\ref{fig:setup}.
-We used a tunable light source (MAX-303, Asahi Spectra) equipped with a broadband xenon lamp.
+We used a tunable light source (MAX-303, Asahi Spectra Co., Ltd.) equipped with a broadband xenon lamp.
 We selected the excitation wavelength via a rotating filter wheel and guided it to the sample through an optical fiber.
-The fluorescence emitted from the sample passed through an emission-side bandpass filter to remove scattered excitation light, and a UV-sensitive camera (BU-56DUV, Bitran) captured the signal.
+The fluorescence emitted from the sample passed through an emission-side bandpass filter to remove scattered excitation light, and a UV-sensitive camera (BU-56DUV, BITRAN CORPORATION) captured the signal.
 
 To construct a comprehensive hyperspectral dataset, we combined excitation bandpass filters (center wavelengths: 260--380 nm) and emission bandpass filters (280--600 nm) at 20 nm intervals.
 By selecting valid combinations satisfying the Stokes shift (fluorescence wavelength $>$ excitation wavelength), we acquired a total of 98 spectral images.
@@ -129,15 +133,15 @@ By selecting valid combinations satisfying the Stokes shift (fluorescence wavele
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.8\linewidth]{figures/experimental_setup.jpg}
-  \caption{Schematic diagram of the benchtop evaluation system used for hyperspectral data acquisition.
+  \caption{Schematic diagram of the benchtop evaluation system used for hyperspectral fluorescent image acquisition.
   A broadband xenon lamp and interchangeable bandpass filters were used to excite the samples, and the emitted fluorescence was captured by a UV-sensitive camera to construct a comprehensive dataset for spectral optimization.
   \label{fig:setup} }
 \end{figure}
 
 \subsection{Samples and Data Acquisition}
-We used nine types of virgin resin pellets (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS), which account for the majority of global plastic production, as experimental samples.
+We used nine types of virgin polymer pellets (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS), which account for the majority of global plastic production, as experimental samples.
 The size of each pellet is approximately 3--5 mm (Fig~\ref{fig:samples}(a)).
-While these are transparent or white under visible light and difficult to distinguish, they exhibit characteristic fluorescence intensity differences under UV excitation (Fig~\ref{fig:samples}(b), (c)).
+While these are transparent or white under visible light and difficult to distinguish its type, they exhibit characteristic fluorescence intensity differences under UV excitation (Fig~\ref{fig:samples}(b), (c)).
 To improve data acquisition efficiency, we arranged the nine types of pellets within the same field of view during imaging.
 We acquired the datasets used for model calibration and evaluation in independent imaging sessions with different geometric arrangements:
 
@@ -186,9 +190,9 @@ In this study, we propose a framework for high-throughput and accurate identific
 The process consists of three main stages: (1) Problem Formulation, (2) Pre-processing, and (3) Feature Selection.
 
 \subsection{Problem Formulation}
-Let the spectral intensity vector obtained from each pixel be $\mathbf{x} \in \mathbb{R}^D$ (where $D=98$ corresponds to the number of acquired spectral images described in Section 3.1).
+Let the spectral intensity vector picked from each pixcel up be $\mathbf{x} \in \mathbb{R}^D$ (where $D=98$ corresponds to the number of acquired spectral images described in Section 3.1).
 Let the class label of the target polymer be $y \in \{C_1, \dots, C_9\}$.
-The objective of this study is to learn a mapping function $f: \mathbf{x} \to y$ that predicts the correct label $y$ from the input $\mathbf{x}$.
+The objective of this study is to learn a mapping function $f: \mathbf{x} \to y$ that predicts the ground-truth label $y$ from the input $\mathbf{x}$.
 
 To verify the effectiveness of the proposed method, we define two experimental settings:
 \begin{itemize}
@@ -199,17 +203,17 @@ To verify the effectiveness of the proposed method, we define two experimental s
 \subsection{Pre-processing}
 The pixel intensity of the acquired fluorescence images strongly depends on the geometric shape of the sample, the distance from the light source, and the non-uniformity of illumination.
 These intensity variations hinder accurate polymer identification.
-Therefore, in this study, to achieve robust identification based solely on the polymer-specific ``spectral profile'' rather than absolute intensity, we applied Minimum Value Subtraction and L2 Normalization to the spectral data vector $\mathbf{x}$ of each pixel:
+Therefore, in this study, to achieve robust identification based solely on the polymer-specific spectral profile rather than absolute intensity, we applied Minimum Value Subtraction and L2 Normalization to the spectral data vector $\mathbf{x}$ of each pixel:
 
 \begin{equation}
-\label{eq:preprocessing}
-\mathbf{x}' = \frac{\mathbf{x} - \min(\mathbf{x})}{\|\mathbf{x} - \min(\mathbf{x})\|_2}.
+  \label{eq:preprocessing}
+  \boldsymbol{x}' = \frac{\boldsymbol{x} - \min(\boldsymbol{x})}{\left\| \boldsymbol{x} - \min(\boldsymbol{x}) \right\|_2}.
 \end{equation}
 
 This process generates a normalized feature vector $\mathbf{x}'$ that is independent of lighting conditions and sample arrangement.
 
-\subsection{Feature Selection Strategy}
-To determine the optimal subset of spectral bands, we implemented a stepwise method based on the Random Forest Gini Importance described in Section 2.2.
+\subsection{Spectral Feature Selection Strategy}
+To determine the optimal subset of spectral bands, we implemented a step-wise approach based on the Random Forest Gini Importance described in Section 2.2.
 The specific procedure is as follows:
 
 \begin{enumerate}
@@ -235,7 +239,7 @@ The specific procedure is as follows:
 \subsection{Optimization of Spectral Bands}
 The results of feature selection by the step-wise method using the calibration dataset are shown in Fig~\ref{fig:feature_selection_results}(a).
 As the number of spectral bands $k$ increased, the Weighted Average F1-Score for all 9 classes rose rapidly, exceeding 0.90 at $k=2$.
-Subsequently, the improvement in the score became gradual, and we confirmed that the accuracy reached a saturation level (approx. 0.96) around $k=5$.
+The score improvement subsequently plateaued, and, with the accuracy reached a saturation level (approx. 0.96) around $k=5$.
 Although a slight increase was observed up to $k=8$, the marginal gain was negligible considering the trade-off with computational cost and data volume.
 Therefore, the internal validation suggested that a compact subset of approximately 5 bands captures the majority of the spectral features required for classification.
 In this internal validation stage, the model demonstrated an extremely high precision rate.
@@ -252,7 +256,7 @@ In this internal validation stage, the model demonstrated an extremely high prec
   \hfill
   % (b) Stability
   \begin{minipage}[b]{0.48\linewidth}
-    \centering
+    \centering-
     \includegraphics[width=\linewidth]{figures/paper_figure_stability_horizontal.jpg}
     \subcaption{Feature stability analysis.}
     \label{fig:stability}
@@ -268,15 +272,16 @@ In this internal validation stage, the model demonstrated an extremely high prec
 
 \subsection{Generalization Performance on External Validation Set}
 We validated the generalization capability of the selected subsets using the external validation dataset acquired independently from the training data.
-Figure~\ref{fig:external_validation} illustrates the Weighted Average F1-Score on the external set.
+Fig~\ref{fig:external_validation} illustrates the Weighted Average F1-Score on the external set.
 Contrasting with the internal validation, the performance peaked at $k=5$ with an F1-score of 0.9171.
 Notably, this peak score slightly outperformed the baseline score of 0.916 obtained using the full spectrum of 98 bands.
 Furthermore, adding features beyond $k=5$ caused a decrease in accuracy, with the F1-score dropping to 0.880 at $k=10$.
 This phenomenon suggests that the lower-ranked features contain environmental noise or redundant information that hinders generalization.
 Therefore, we concluded that $k=5$ is the optimal cutoff for this system.
 
-To further investigate the classification behavior, we analyzed the performance of each individual polymer class.
-Figure~\ref{fig:classwise_performance} presents the F1-score transition for each of the 9 classes.
+To further investigate how the model distinguishes between polymers
+, we analyzed the class-wise performance.
+Fig~\ref{fig:classwise_performance} presents the F1-score transition for each of the 9 classes.
 We observed distinct behaviors depending on the material type:
 \begin{itemize}
     \item \textbf{Early Saturation:} Polymers such as ABS, LDPE, and PVC reached high accuracy exceeding 0.9 with only 1 or 2 bands. This indicates that these materials possess distinct spectral features that are easy to isolate.
@@ -310,6 +315,18 @@ We observed distinct behaviors depending on the material type:
   \label{fig:classwise_performance}}
 \end{figure}
 
+% % 混同行列の図を追加
+% \begin{figure}[htbp]
+%   \centering
+%   % アップロードされた画像を "figures/" フォルダに入れて指定してください
+%   \includegraphics[width=0.7\linewidth]{figures/confusion_matrix.png}
+
+%   \caption{Normalized confusion matrix evaluated on the external validation dataset ($k=5$).
+%   The diagonal elements represent the classification accuracy (Recall) for each class.
+%   A distinct confusion is observed between HDPE and PET (True PET is misclassified as HDPE in 35\% of cases), highlighting the spectral similarity between these polymers.
+%   \label{fig:confusion_matrix}}
+% \end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DISCUSSION}
 
@@ -327,7 +344,7 @@ The experimental results demonstrate a speedup of several orders of magnitude co
 There are several limitations to this study.
 
 First, we observed some confusion between PET and HDPE (PET misclassification rate: approx. 35\%).
-We attribute the root cause of this misclassification to the significant feature overlap between these classes in the reduced 8-dimensional space, despite their distinct full spectral shapes.
+We attribute this misclassification to the significant feature overlap between these classes in the reduced 8-dimensional space, despite their distinct full spectral shapes.
 
 While the current Random Forest model struggled to separate these overlapping clusters, introducing representation learning methods such as Deep Learning could potentially improve discrimination by learning more complex manifold structures.
 
