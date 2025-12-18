@@ -46,7 +46,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  The widespread contamination of microplastics (MPs) necessitates comprehensive monitoring across various environments. However, standard analytical methods, such as FTIR and Raman spectroscopy, are rely on point-scanning, which is time-consuming and resource-intensive, limiting their utility for high-throughput screening. Here, we propose a rapid multispectral imaging method using polymer auto-fluorescence under UV excitation. Leveraging the distinct fingerprints observed in Excitation-Emission Matrices (EEMs), our approach optimizes spectral acquisition by selecting a minimal subset of effective spectral bands rather than measuring the full sets of spectra in the EEM. Using a Random Forest-based feature selection, we demonstrated that only 8 spectral bands are sufficient to classify 9 representative virgin polymers with an average accuracy of 89\%. This significant reduction in spectral dimensionality facilitates the design of simplified hardware using commercially available UV-LEDs, offering a practical and accessible solution for high-throughput MP monitoring.
+  The widespread contamination of microplastics (MPs) necessitates comprehensive monitoring across various environments. However, standard analytical methods, such as FTIR and Raman spectroscopy, are rely on point-scanning, which is time-consuming and resource-intensive, limiting their utility for high-throughput screening. Here, we propose a rapid multispectral imaging method using polymer auto-fluorescence under UV excitation. Leveraging the distinct fingerprints observed in Excitation-Emission Matrices (EEMs), our approach optimizes spectral acquisition by selecting a minimal subset of effective spectral bands rather than measuring the full sets of spectra in the EEM. Using a Random Forest-based feature selection, we demonstrated that a subset of 5 spectral bands maximizes the classification performance for 9 representative virgin polymers, achieving a weighted F1-score of 0.92. This significant reduction in spectral dimensionality facilitates the design of simplified hardware using commercially available UV-LEDs, offering a practical and accessible solution for high-throughput MP monitoring.
 \end{abstract}
 
 \keywords{Microplastics, Multispectral fluorescence imaging, UV excitation, High-throughput screening, Spectral optimization, Excitation-emission matrix}
@@ -87,7 +87,7 @@ Under the dilute solution or thin film approximation, Equation (\ref{eq:fluoresc
 Since the spectral profiles of $\varepsilon$ (absorption characteristics) and $\Phi$ (emission efficiency) differ depending on the polymer type, measuring these at multiple wavelengths enables material identification.
 
 As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Tech).
-Fig~\ref{fig:eem} showed the measured EEMs.
+Fig~\ref{fig:eem} shows the measured EEMs.
 These results confirmed that each polymer possesses a specific fluorescence spectrum under UV excitation.
 
 \begin{figure}[ht]
@@ -285,7 +285,7 @@ We observed distinct behaviors depending on the material type:
     Additionally, PC, PP, and PS demonstrated rapid convergence, reaching their baseline performance levels at $k=5$.
     % This indicates that these materials possess distinct spectral features that are easy to isolate.
     \item \textbf{Peak and Drop:}
-    HDPE and PET showed a clear peak around $k=3$ to $5$. Notably, for these materials, the F1-scores of the selected subset were higher than the full-spectrum baseline.
+    HDPE and PET show a clear peak around $k=3$ to $5$. Notably, for these materials, the F1-scores of the selected subset were higher than the full-spectrum baseline.
     % This confirms that feature selection effectively removed confounding spectral noise, thereby improving identification accuracy for chemically similar plastics.
     \item \textbf{Slow Saturation:} PMMA and LDPE exhibited a slower convergence to the baseline accuracy compared to other materials.
     % ; however, the system maintained a practical classification performance across all 9 classes using the optimized subset.
@@ -293,7 +293,7 @@ We observed distinct behaviors depending on the material type:
 
 Fig~\ref{fig:confusion_matrix} presents the confusion matrix obtained with the optimal subset of $k=5$.
 The model achieved perfect classification (a recall of 1.00) for ABS, PS, and PVC.
-In contrast, mutual confusion was observed between PET and HDPE.
+In contrast, we observed mutual confusion between PET and HDPE.
 Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of HDPE samples as PET.
 % This suggests a spectral similarity between these two polymers in the selected bands.
 
@@ -383,7 +383,7 @@ We will adopt a single-board computer (SBC, e.g., Raspberry Pi 5) for the contro
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{CONCLUSION}
 In this study, we demonstrated the feasibility of a high-throughput microplastic identification method using UV excitation fluorescence imaging.
-Through band selection using the step-wise method, we revealed that an average classification accuracy of 89\% can be obtained across nine representative plastic types with only 8 spectral bands.
+Through band selection using the step-wise method, we revealed that a weighted F1-score of 0.92 can be obtained across nine representative plastic types with only 5 spectral bands.
 The proposed method achieves significantly higher throughput compared to conventional methods and demonstrates high industrial practicality.
 Based on these findings, we also proposed a design for a compact standalone system using UV-LEDs.
 In the future, we will focus on the construction of this dedicated hardware and demonstration experiments using real marine samples.
