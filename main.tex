@@ -189,7 +189,7 @@ In this study, we propose a framework for high-throughput and accurate identific
 The process consists of three main stages: (1) Problem Formulation, (2) Pre-processing, and (3) Feature Selection.
 
 \subsection{Problem Formulation}
-Let the spectral intensity vector picked from each pixcel up be $\mathbf{x} \in \mathbb{R}^D$ (where $D=98$ corresponds to the number of acquired spectral images described in Section 3.1).
+Let the spectral intensity vector at each pixel be $\mathbf{x} \in \mathbb{R}^D$ (where $D=98$ corresponds to the number of acquired spectral images described in Section 3.1).
 Let the class label of the target polymer be $y \in \{C_1, \dots, C_9\}$.
 The objective of this study is to learn a mapping function $f: \mathbf{x} \to y$ that predicts the ground-truth label $y$ from the input $\mathbf{x}$.
 
@@ -336,9 +336,11 @@ Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of H
 \section{DISCUSSION}
 
 \subsection{Interpretation of Optimization Behavior}
-In this study, we strategically prioritized global optimization to maximize the system's overall average performance suitable for simultaneous screening.
-Consequently, while we observed a temporary score decrease for specific classes (e.g., HDPE) due to class-specific trade-offs, the selected 8 bands achieved high generalization performance on the external validation set.
-This confirms that prioritizing the overall average over slight individual fluctuations is an effective and rational strategy for high-throughput applications.
+In this study, we prioritized optimizing the overall average performance for high-throughput screening.
+The feature selection analysis, as shown in Fig~\ref{fig:optimization}(b), revealed that the top 5 spectral bands were selected in more than 7 out of 10 cross-validation folds.
+This high selection frequency demonstrates the robustness and stability of these features.
+While including additional bands beyond this optimal subset resulted in a performance decline for specific polymers such as HDPE and PET, the selected 5 bands successfully maximized the system-wide weighted average F1-score.
+This confirms that identifying a compact and stable feature subset is a rational strategy to ensure generalization capability.
 
 \subsection{High-Throughput Capability}
 The greatest advantage of this method is the overwhelming throughput achieved by area-scan imaging.
@@ -349,9 +351,10 @@ The experimental results demonstrate a speedup of several orders of magnitude co
 There are several limitations to this study.
 
 First, we observed some confusion between PET and HDPE (PET misclassification rate: approx. 35\%).
-We attribute this misclassification to the significant feature overlap between these classes in the reduced 8-dimensional space, despite their distinct full spectral shapes.
-
-While the current Random Forest model struggled to separate these overlapping clusters, introducing representation learning methods such as Deep Learning could potentially improve discrimination by learning more complex manifold structures.
+Analysis of the feature space using t-SNE revealed that while the clusters for PET and HDPE are spatially separated (indicating sufficient spectral distinguishability), a distinct distribution shift occurred between the calibration and validation datasets.
+Despite the inherent separability of the features, the Random Forest model misclassified a significant portion of PET validation samples as HDPE.
+This suggests that the model's static decision boundaries could not robustly handle the observed distributional discrepancy between the datasets.
+Future work will focus on methods to compensate for such dataset shifts to ensure consistent classification.
 
 Second is the scope of direct accuracy comparison.
 Since this study focuses on throughput improvement, we did not perform strict particle-to-particle comparison with conventional methods.
