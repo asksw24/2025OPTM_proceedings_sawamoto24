@@ -90,8 +90,8 @@ Generally, the fluorescence intensity $F$ at an excitation wavelength $\lambda_{
 Under the dilute solution or thin film approximation, Equation (\ref{eq:fluorescence}) becomes linear with respect to the material-intrinsic parameters $\varepsilon$ and $\Phi$.
 Since the spectral profiles of $\varepsilon$ (absorption characteristics) and $\Phi$ (emission efficiency) differ depending on the polymer type, measuring these at multiple wavelengths enables material identification.
 
-As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Tech).
-Fig~\ref{fig:eem} shows the measured EEMs.
+As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Technologies Corporation).
+Fig.~\ref{fig:eem} shows the measured EEMs.
 These results confirmed that each polymer possesses a specific fluorescence spectrum under UV excitation.
 
 \begin{figure}[ht]
@@ -125,7 +125,7 @@ This allowed us to determine the optimal band configuration that minimizes imagi
 
 \subsection{Optical Configuration}
 To acquire comprehensive data for spectral optimization, we used a benchtop evaluation system equipped with a broadband light source~\cite{Bui2018-hw}.
-Fig~\ref{fig:setup} shows the schematic diagram of the experimental apparatus.
+Fig.~\ref{fig:setup} shows the schematic diagram of the experimental apparatus.
 We used a tunable light source (MAX-303, Asahi Spectra Co., Ltd.) equipped with a broadband xenon lamp.
 We selected the excitation wavelength via a rotating filter wheel and guided it to the sample through an optical fiber.
 The fluorescence emitted from the sample passed through an emission-side bandpass filter to remove scattered excitation light, and a UV-sensitive camera (BU-56DUV, BITRAN CORPORATION) captured the signal.
@@ -143,8 +143,8 @@ By selecting valid combinations satisfying the Stokes shift (fluorescence wavele
 
 \subsection{Samples and Data Acquisition}
 We used nine types of virgin polymer pellets (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS), which account for the majority of global plastic production, as experimental samples.
-The size of each pellet is approximately 3--5 mm (Fig~\ref{fig:samples}(a)).
-While these are transparent or white under visible light and difficult to distinguish its type, they exhibit characteristic fluorescence intensity differences under UV excitation (Fig~\ref{fig:samples}(b), (c)).
+The size of each pellet is approximately 3--5 mm (Fig.~\ref{fig:samples}(a)).
+While these are transparent or white under visible light and difficult to distinguish its types, they exhibit characteristic fluorescence intensity differences under UV excitation (Fig.~\ref{fig:samples}(b), (c)).
 To improve data acquisition efficiency, we arranged the nine types of pellets within the same field of view during imaging.
 We acquired the datasets used for model calibration and evaluation in independent imaging sessions with different geometric arrangements:
 
@@ -240,10 +240,10 @@ The specific procedure is as follows:
 \section{RESULTS}
 
 \subsection{Optimization of Spectral Bands}
-Fig~\ref{fig:feature_selection_results}(a) shows the results of feature selection by the step-wise method using the calibration dataset.
+Fig.~\ref{fig:feature_selection_results}(a) shows the results of feature selection by the step-wise method using the calibration dataset.
 As the number of spectral bands $k$ increased, the Weighted Average F1-Score for all 9 classes rose rapidly, exceeding 0.95 at $k=5$.
 The score improvement subsequently plateaued, and, with the accuracy reached a saturation level (approx. 0.99) around $k=11$.
-Fig~\ref{fig:feature_selection_results}(b) shows the selection frequency of each spectral band obtained through 10-fold cross-validation. We observed that the top five bands were selected in more than 7 out of 10 folds.
+Fig.~\ref{fig:feature_selection_results}(b) shows the selection frequency of each spectral band obtained through 10-fold cross-validation. We observed that the top five bands were selected in more than 7 out of 10 folds.
 
 \begin{figure}[htbp]
   \centering
@@ -273,7 +273,7 @@ Fig~\ref{fig:feature_selection_results}(b) shows the selection frequency of each
 
 \subsection{Generalization Performance on External Validation Set}
 We validated the generalization capability of the selected subsets using the external validation dataset acquired independently from the training data.
-Fig~\ref{fig:external_validation} illustrates the Weighted Average F1-Score on the external set.
+Fig.~\ref{fig:external_validation} illustrates the Weighted Average F1-Score on the external set.
 Contrasting with the internal validation, the performance peaked at $k=5$ with an F1-score of 0.9171.
 Notably, this peak score slightly outperformed the baseline score of 0.916 obtained using the full spectrum of 98 bands.
 Furthermore, adding features beyond $k=5$ caused a decrease in accuracy, with the F1-score dropping to 0.880 at $k=10$.
@@ -282,7 +282,7 @@ Therefore, we concluded that $k=5$ is the optimal cutoff for this system.
 
 To further investigate how the model distinguishes between polymers
 , we analyzed the class-wise performance.
-Fig~\ref{fig:classwise_performance} presents the F1-score transition for each of the 9 classes.
+Fig.~\ref{fig:classwise_performance} presents the F1-score transition for each of the 9 classes.
 We observed distinct behaviors depending on the material type:
 \begin{itemize}
     \item \textbf{Early Saturation:} Polymers such as ABS and PVC reached high accuracy exceeding 0.9 with only 1 band.
@@ -295,7 +295,7 @@ We observed distinct behaviors depending on the material type:
     % ; however, the system maintained a practical classification performance across all 9 classes using the optimized subset.
 \end{itemize}
 
-Fig~\ref{fig:confusion_matrix} presents the confusion matrix obtained with the optimal subset of $k=5$.
+Fig.~\ref{fig:confusion_matrix} presents the confusion matrix obtained with the optimal subset of $k=5$.
 The model achieved perfect classification (a recall of 1.00) for ABS, PS, and PVC.
 In contrast, we observed mutual confusion between PET and HDPE.
 Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of HDPE samples as PET.
@@ -341,7 +341,7 @@ Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of H
 
 \subsection{Interpretation of Optimization Behavior}
 In this study, we prioritized optimizing the overall average performance for high-throughput screening.
-The feature selection analysis, as shown in Fig~\ref{fig:feature_selection_results}(b), revealed that the top 5 spectral bands were selected in more than 7 out of 10 cross-validation folds.
+The feature selection analysis, as shown in Fig.~\ref{fig:feature_selection_results}(b), revealed that the top 5 spectral bands were selected in more than 7 out of 10 cross-validation folds.
 This high selection frequency demonstrates the robustness and stability of these features.
 While including additional bands beyond this optimal subset resulted in a performance decline for specific polymers such as HDPE and PET, the selected 5 bands successfully maximized the system-wide weighted average F1-score.
 This confirms that identifying a compact and stable feature subset is a rational strategy to ensure generalization capability.
@@ -369,7 +369,7 @@ Since microplastics in actual marine environments may have altered fluorescence 
 \subsection{System Design for Field Deployment}
 We conducted this study as a proof-of-principle for the future construction of a high-throughput system.
 Based on the verification results, we designed a compact dedicated system for on-site implementation.
-Fig~\ref{fig:future_system} shows the block diagram of the proposed system.
+Fig.~\ref{fig:future_system} shows the block diagram of the proposed system.
 To replace the large benchtop equipment, we adopted high-power UV-LEDs as the light source.
 However, commercially available LEDs have a wider Full Width at Half Maximum (FWHM) compared to bandpass filters, and the selectable center wavelengths are discrete.
 Therefore, in this design, we selected a group of commercially available LEDs that approximately cover the spectral regions suggested to be effective in the benchtop experiment.
