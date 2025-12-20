@@ -53,17 +53,17 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
-The widespread accumulation of microplastics (MPs) in the natural environment is an increasingly serious international issue~\cite{Hale2020-sc, Jambeck2015-yz}.
+The widespread accumulation of microplastics (MPs) in the natural environment is an increasingly serious global issue~\cite{Hale2020-sc, Jambeck2015-yz}.
 Understanding MP pollution sources and dynamics requires comprehensively quantifying their distribution and flux across various media~\cite{Rocha-Santos2015-ph}.
 Specifically, tracking pollution sources and environmental behavior, identifying the specific material type, such as polyethylene (PE) from packaging vs. polyethylene terephthalate (PET) from bottles, of every single sample collected in field surveys is essential~\cite{Hidalgo-Ruz2012-wx}.
 
 However, while conventional analytical methods such as Fourier Transform Infrared Spectroscopy (FTIR) and Raman spectroscopy excel at identifying the chemical structure of MPs, they rely on point-scanning, which requires an enormous amount of time for analysis~\cite{Prata2019-kt, Shim2017-kb}.
 Consequently, comprehensive chemical profiling of the vast amounts of MPs in the environment is virtually impossible within a realistic timeframe.
-Therefore, for in-process applications, there is a strong demand for high-throughput solutions that achieve both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}.
+In-process applications, therefore, urgently demand for high-throughput solutions that achieve both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}.
 
 Excitation-Emission Matrix (EEM) spectroscopy enables the non-destructive characterization of chemical compositions.
 When coupled with supervised machine learning algorithms, it facilitates the robust classification of complex environmental samples~\cite{Hall2007-fl}.
-Furthermore, our research group has extended this approach to fluorescence imaging to visualize the spatial distribution of quality attributes. Specifically, we successfully visualized the distribution of freshness indices (such as K-value and IMP content) in frozen fish fillets~\cite{Bui2018-hw} and achieved non-destructive prediction of pH in frozen fish meat~\cite{Rahman2022-zd}.
+Furthermore, our research group has previously extended this approach to fluorescence imaging to visualize the spatial distribution of quality attributes. Specifically, we successfully visualized the distribution of freshness indices (such as K-value and IMP content) in frozen fish fillets~\cite{Bui2018-hw} and achieved non-destructive prediction of pH in frozen fish meat~\cite{Rahman2022-zd}.
 
 In the context of MP monitoring, Maes et al. established a rapid screening approach using fluorescent tagging with Nile Red~\cite{Maes2017-bt}. More recently, Li et al. proposed a fluorescence polarimetry method to identify plastic types~\cite{Li2025-hi}. While these approaches are effective, a label-free method utilizing intrinsic auto-fluorescence is more desirable for in-process monitoring to eliminate sample preparation steps.
 
@@ -90,7 +90,7 @@ Generally, the fluorescence intensity $F$ at an excitation wavelength $\lambda_{
 Under the dilute solution or thin film approximation, Equation (\ref{eq:fluorescence}) becomes linear with respect to the material-intrinsic parameters $\varepsilon$ and $\Phi$.
 Since the spectral profiles of $\varepsilon$ (absorption characteristics) and $\Phi$ (emission efficiency) differ depending on the polymer type, measuring these at multiple wavelengths enables material identification.
 
-As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Technologies Corporation).
+As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Technologies Corp.).
 Fig.~\ref{fig:eem} shows the measured EEMs.
 These results confirmed that each polymer possesses a specific fluorescence spectrum under UV excitation.
 
@@ -128,7 +128,7 @@ To acquire comprehensive data for spectral optimization, we used a benchtop eval
 Fig.~\ref{fig:setup} shows the schematic diagram of the experimental apparatus.
 We used a tunable light source (MAX-303, Asahi Spectra Co., Ltd.) equipped with a broadband xenon lamp.
 We selected the excitation wavelength via a rotating filter wheel and guided it to the sample through an optical fiber.
-The fluorescence emitted from the sample passed through an emission-side bandpass filter to remove scattered excitation light, and a UV-sensitive camera (BU-56DUV, BITRAN CORPORATION) captured the signal.
+The fluorescence emitted from the sample passed through an emission-side bandpass filter to remove scattered excitation light, and a UV-sensitive camera (BU-56DUV, BITRAN Corp.) captured the signal.
 
 To construct a comprehensive hyperspectral dataset, we combined excitation bandpass filters (center wavelengths: 260--380 nm) and emission bandpass filters (280--600 nm) at 20 nm intervals.
 By selecting valid combinations satisfying the Stokes shift (fluorescence wavelength $>$ excitation wavelength), we acquired a total of 98 spectral images.
@@ -199,14 +199,14 @@ The objective of this study is to learn a mapping function $f: \mathbf{x} \to y$
 
 To verify the effectiveness of the proposed method, we define two experimental settings:
 \begin{itemize}
-    \item \textbf{Baseline (Full-Spectrum):} A model that uses the entire wavelength band ($D=98$) as input features. This serves as the theoretical upper limit of accuracy.
-    \item \textbf{Ours (Optimized-Band):} A model that uses only $k$ important bands selected by the algorithm described below ($k \ll 98$).
+    \item \textbf{Full-Spectrum (Baseline):} A model that uses the entire wavelength band ($D=98$) as input features. This serves as the theoretical upper limit of accuracy.
+    \item \textbf{Optimized-Band (Ours):} A model that uses only $k$ important bands selected by the algorithm described below ($k \ll 98$).
 \end{itemize}
 
 \subsection{Pre-processing}
 The pixel intensity of the acquired fluorescence images strongly depends on the geometric shape of the sample, the distance from the light source, and the non-uniformity of illumination.
 These intensity variations hinder accurate polymer identification.
-Therefore, in this study, to achieve robust identification based solely on the polymer-specific spectral profile rather than absolute intensity, we applied Minimum Value Subtraction and L2 Normalization to the spectral data vector $\mathbf{x}$ of each pixel:
+To achieve robust identification based solely on the polymer-specific spectral profile rather than absolute intensity, we applied Minimum Value Subtraction and L2 Normalization to the spectral data vector $\mathbf{x}$ of each pixel:
 
 \begin{equation}
   \label{eq:preprocessing}
@@ -242,7 +242,7 @@ The specific procedure is as follows:
 \subsection{Optimization of Spectral Bands}
 Fig.~\ref{fig:feature_selection_results}(a) shows the results of feature selection by the step-wise method using the calibration dataset.
 As the number of spectral bands $k$ increased, the Weighted Average F1-Score for all 9 classes rose rapidly, exceeding 0.95 at $k=5$.
-The score improvement subsequently plateaued, and, with the accuracy reached a saturation level (approx. 0.99) around $k=11$.
+The score improvement subsequently plateaued, reaching a saturation level (approx. 0.99) around $k=11$.
 Fig.~\ref{fig:feature_selection_results}(b) shows the selection frequency of each spectral band obtained through 10-fold cross-validation. We observed that the top five bands were selected in more than 7 out of 10 folds.
 
 \begin{figure}[htbp]
@@ -272,18 +272,17 @@ Fig.~\ref{fig:feature_selection_results}(b) shows the selection frequency of eac
 
 
 \subsection{Generalization Performance on External Validation Set}
-We validated the generalization capability of the selected subsets using the external validation dataset acquired independently from the training data.
+We validated the generalization capability of the selected subsets using the external validation dataset acquired independently from the calibration dataset.
 Fig.~\ref{fig:external_validation} illustrates the Weighted Average F1-Score on the external set.
 Contrasting with the internal validation, the performance peaked at $k=5$ with an F1-score of 0.9171.
 Notably, this peak score slightly outperformed the baseline score of 0.916 obtained using the full spectrum of 98 bands.
-Furthermore, adding features beyond $k=5$ caused a decrease in accuracy, with the F1-score dropping to 0.880 at $k=10$.
+Adding features beyond $k=5$ caused a decrease in accuracy, with the F1-score dropping to 0.880 at $k=10$.
 % This phenomenon suggests that the lower-ranked features contain environmental noise or redundant information that hinders generalization.
-Therefore, we concluded that $k=5$ is the optimal cutoff for this system.
+Consequently, we concluded that $k=5$ is the optimal cutoff for this system.
 
 To further investigate how the model distinguishes between polymers
 , we analyzed the class-wise performance.
-Fig.~\ref{fig:classwise_performance} presents the F1-score transition for each of the 9 classes.
-We observed distinct behaviors depending on the material type:
+Fig.~\ref{fig:classwise_performance} presents the F1-score transition for each of the 9 classes, revealing distinct material-dependent behaviors depending on the material type:
 \begin{itemize}
     \item \textbf{Early Saturation:} Polymers such as ABS and PVC reached high accuracy exceeding 0.9 with only 1 band.
     Additionally, PC, PP, and PS demonstrated rapid convergence, reaching their baseline performance levels at $k=5$.
@@ -340,21 +339,18 @@ Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of H
 \section{DISCUSSION}
 
 \subsection{Interpretation of Optimization Behavior}
-In this study, we prioritized optimizing the overall average performance for high-throughput screening.
-The feature selection analysis, as shown in Fig.~\ref{fig:feature_selection_results}(b), revealed that the top 5 spectral bands were selected in more than 7 out of 10 cross-validation folds.
-This high selection frequency demonstrates the robustness and stability of these features.
+This study prioritized optimizing the overall average performance for high-throughput screening.
+The feature selection analysis, as shown in Fig.~\ref{fig:feature_selection_results}(b), revealed that the top 5 spectral bands were selected in more than 7 out of 10 cross-validation folds, demonstrating the robustness and stability of these features.
 While including additional bands beyond this optimal subset resulted in a performance decline for specific polymers such as HDPE and PET, the selected 5 bands successfully maximized the system-wide weighted average F1-score.
-This confirms that identifying a compact and stable feature subset is a rational strategy to ensure generalization capability.
+This confirms that identifying a compact and stable feature subset is a effective strategy to ensure generalization capability while minimizing data dimensionality.
 
 \subsection{High-Throughput Capability}
-The greatest advantage of this method is the overwhelming throughput achieved by area-scan imaging.
+The primary advantage of this method is the superior throughput achieved by area-scan imaging.
 While conventional point-scanning methods require time proportional to the number of measurement points, our method acquires spectral information for the entire field of view simultaneously.
-The experimental results demonstrate a speedup of several orders of magnitude compared to conventional methods.
+The experimental results demonstrate a speedup of several orders of magnitude compared to conventional spectroscopic techniques.
 
 \subsection{Limitations and Potential Improvements}
-There are several limitations to this study.
-
-First, we observed some confusion between PET and HDPE (PET misclassification rate: approx. 35\%).
+This study has several limitations. First, we observed some confusion between PET and HDPE (PET misclassification rate: approx. 35\%).
 Analysis of the feature space using t-SNE revealed that while the clusters for PET and HDPE are spatially separated (indicating sufficient spectral distinguishability), a distinct distribution shift occurred between the calibration and validation datasets.
 Despite the inherent separability of the features, the Random Forest model misclassified a significant portion of PET validation samples as HDPE.
 This suggests that the model's static decision boundaries could not robustly handle the observed distributional discrepancy between the datasets.
@@ -363,18 +359,17 @@ Future work will focus on methods to compensate for such dataset shifts to ensur
 Second is the scope of direct accuracy comparison.
 Since this study focuses on throughput improvement, we did not perform strict particle-to-particle comparison with conventional methods.
 
-Third, we conducted this experiment using virgin pellets.
+Third, the experiments utilized virgin polymer pellets.
 Since microplastics in actual marine environments may have altered fluorescence characteristics due to biofilm adhesion or weathering, further verification using real environmental samples is necessary.
 
 \subsection{System Design for Field Deployment}
-We conducted this study as a proof-of-principle for the future construction of a high-throughput system.
-Based on the verification results, we designed a compact dedicated system for on-site implementation.
+As a proof-of-principle for high-throughput monitoring, we utilized these findings to design a compact, dedicated system for on-site implementation (Fig.~\ref{fig:future_system}).
 Fig.~\ref{fig:future_system} shows the block diagram of the proposed system.
 To replace the large benchtop equipment, we adopted high-power UV-LEDs as the light source.
 However, commercially available LEDs have a wider Full Width at Half Maximum (FWHM) compared to bandpass filters, and the selectable center wavelengths are discrete.
-Therefore, in this design, we selected a group of commercially available LEDs that approximately cover the spectral regions suggested to be effective in the benchtop experiment.
-In the future, we plan to perform re-optimization of features based on actual hardware characteristics using this compact system.
-We will adopt a single-board computer (SBC, e.g., Raspberry Pi 5) for the control system, aiming to realize a low-cost, standalone monitoring solution.
+Therefore, in this design, we selected a group of commercially available LEDs that approximately cover the spectral regions identified in the benchtop experiment.
+In the future, we plan to perform re-optimization of features considering actual hardware characteristics using this compact system.
+We will adopt a single-board computer (SBC, e.g., Raspberry Pi 5) for control, aiming to realize a low-cost, standalone monitoring solution.
 
 \begin{figure}[ht]
   \centering
@@ -386,11 +381,11 @@ We will adopt a single-board computer (SBC, e.g., Raspberry Pi 5) for the contro
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{CONCLUSION}
-In this study, we demonstrated the feasibility of a high-throughput microplastic identification method using UV excitation fluorescence imaging.
-Through band selection using the step-wise method, we revealed that a weighted F1-score of 0.92 can be obtained across nine representative plastic types with only 5 spectral bands.
-The proposed method achieves significantly higher throughput compared to conventional methods and demonstrates high industrial practicality.
+This study demonstrated the feasibility of a high-throughput microplastic identification method utilizing UV-excited fluorescence imaging.
+Using a step-wise feature selection approach, we determined that a subset of only five spectral bands yields a weighted F1-score of 0.92 across nine representative plastic types.
+The proposed method achieves significantly higher throughput compared to convensional point-scanning methods, demonstrating high potential for industrial application.
 Based on these findings, we also proposed a design for a compact standalone system using UV-LEDs.
-In the future, we will focus on the construction of this dedicated hardware and demonstration experiments using real marine samples.
+Feature work will focus on the construction of this dedicated hardware and validation experiments using real marine samples.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % References
 
