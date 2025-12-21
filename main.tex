@@ -58,8 +58,8 @@ Understanding MP pollution sources and dynamics requires comprehensively quantif
 Specifically, tracking pollution sources and environmental behavior, identifying the specific material type, such as polyethylene (PE) from packaging vs. polyethylene terephthalate (PET) from bottles, of every single sample collected in field surveys is essential~\cite{Hidalgo-Ruz2012-wx}.
 
 However, while conventional analytical methods such as Fourier Transform Infrared Spectroscopy (FTIR) and Raman spectroscopy excel at identifying the chemical structure of MPs, they rely on point-scanning, which requires an enormous amount of time for analysis~\cite{Prata2019-kt, Shim2017-kb}.
-Consequently, comprehensive chemical profiling of the vast amounts of MPs in the environment is virtually impossible within a realistic timeframe.
-In-process applications, therefore, urgently demand for high-throughput solutions that achieve both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}.
+Such techniques typically utilize bulky, expensive instrumentation restricted to laboratory settings, limiting mobility for on-site monitoring.
+Comprehensive chemical profiling of the vast amounts of MPs in the environment is virtually impossible within a realistic timeframe. In-process applications demand high-throughput solutions achieving both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}.
 
 Excitation-Emission Matrix (EEM) spectroscopy enables the non-destructive characterization of chemical compositions.
 When coupled with supervised machine learning algorithms, it facilitates the robust classification of complex environmental samples~\cite{Hall2007-fl}.
@@ -71,14 +71,14 @@ Specifically, the combination of fluorescence spectroscopy and machine learning 
 
 Furthermore, it is well documented that selecting optimal spectral bands, rather than utilizing the full spectrum, directly contributes to system cost reduction and processing efficiency~\cite{Bolton2018-yo, Mathews2008-kz}. For instance, Bolton et al. developed a low-cost portable system using discrete LEDs, achieving spectral performance comparable to expensive spectrometers~\cite{Bolton2018-yo}. Additionally, Mathews demonstrated that simultaneous acquisition of multiple bands effectively suppresses motion artifacts, which is critical for on-site dynamic measurements~\cite{Mathews2008-kz}. This optimization strategy facilitates the transition from bulky laboratory equipment to practical, portable hardware implementations suitable for on-site inspection~\cite{Beck2015-zd}.
 
-In this study, we propose a multispectral imaging method specialized for polymer identification based on the EEM. By utilizing inherent polymer auto-fluorescence under UV excitation, we capture essential spectral features as images. The validity of this UV-excitation approach is supported by Jeon et al., who demonstrated successful classification of MPs using deep-UV excitation at 266 nm~\cite{Jeon2025-hd}. Moreover, Chatterjee et al. elucidated the emission mechanism of non-conjugated polymers, such as PE and PP, attributing it to space conjugation and clustering effects~\cite{Chatterjee2020-cs}. As a first step, toward the future construction of a high-throughput system, we conducted a feasibility study using a benchtop system equipped with a broadband light source. Consequently, we identified a combination of spectral bands that minimizes measurement time while maintaining classification accuracy.
+In this study, we propose a multispectral imaging method specialized for polymer identification based on the EEM. By utilizing inherent polymer auto-fluorescence under UV excitation, we capture essential spectral features as images. The validity of this UV-excitation approach is supported by Jeon et al., who demonstrated successful classification of MPs using deep-UV excitation at 266 nm~\cite{Jeon2025-hd}. Moreover, Chatterjee et al. elucidated the emission mechanism of non-conjugated polymers, such as PE and PP, attributing it to space conjugation and clustering effects~\cite{Chatterjee2020-cs}. As a first step, toward the future construction of a high-throughput system, we conducted a feasibility study using a benchtop system equipped with a broadband light source. This study successfully identified a combination of spectral bands that minimizes measurement time while maintaining classification accuracy.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{PRINCIPLE}
 
 \subsection{Fluorescence Characteristics}
 Most petroleum-based synthetic polymers emit specific auto-fluorescence under ultraviolet (UV) excitation due to their chemical structures, such as electron conjugated systems, and additives~\cite{Lakowicz2006-dj}.
 This fluorescence characteristic depends on the Excitation-Emission Matrix (EEM) and serves as a unique fingerprint for each polymer type.
-In this study, we utilize these EEM characteristics as the physical basis for MP classification.
+The proposed method leverages these EEM characteristics as the physical basis for MP classification.
 Generally, the fluorescence intensity $F$ at an excitation wavelength $\lambda_{ex}$ and an emission wavelength $\lambda_{em}$ is described by the following simplified model:
 
 \begin{equation}
@@ -90,14 +90,14 @@ Generally, the fluorescence intensity $F$ at an excitation wavelength $\lambda_{
 Under the dilute solution or thin film approximation, Equation (\ref{eq:fluorescence}) becomes linear with respect to the material-intrinsic parameters $\varepsilon$ and $\Phi$.
 Since the spectral profiles of $\varepsilon$ (absorption characteristics) and $\Phi$ (emission efficiency) differ depending on the polymer type, measuring these at multiple wavelengths enables material identification.
 
-As a preliminary experiment, we measured the EEMs of the nine target polymers used in this study (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Technologies Corp.).
+As a preliminary experiment, we measured the EEMs of the nine target polymers (HDPE, LDPE, PP, PS, PVC, PC, PMMA, PET, and ABS) using a fluorescence spectrophotometer (F-7000, Hitachi High-Technologies Corp.).
 Fig.~\ref{fig:eem} shows the measured EEMs.
 These results confirmed that each polymer possesses a specific fluorescence spectrum under UV excitation.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.95\linewidth]{figures/EEM.jpg}
-  \caption{Measured Excitation-Emission Matrices (EEMs) of the nine types of virgin polymer pellets used in this study.
+  \caption{Measured Excitation-Emission Matrices (EEMs) of the nine types of virgin polymer pellets.
   The contour plots represent the fluorescence intensity [a.u.] at excitation (y-axis) and emission (x-axis) wavelengths [nm] for each polymer sample.
   The distinct spectral patterns (fingerprints) observed for each polymer type demonstrate the feasibility of the proposed classification method based on UV-excited fluorescence.
   Note: The diagonal regions corresponding to Rayleigh and Raman scattering have been computationally removed to enhance the visibility of fluorescence features.
@@ -106,9 +106,9 @@ These results confirmed that each polymer possesses a specific fluorescence spec
 
 \subsection{Data-Driven Band Selection}
 While high-dimensional data such as EEMs are essential for accurate polymer classification, acquiring and processing the full hyperspectral datacube is inefficient for real-time applications due to the massive data volume and spectral redundancy.
-Therefore, an approach is needed to selectively acquire only the minimal spectral bands that have a high contribution to discrimination.
+To address this, we require an approach to selectively acquire only the minimal spectral bands that have a high contribution to discrimination.
 However, since spectral data possess strong correlations between bands and contain non-linear relationships, it is difficult to determine the optimal subset using simple linear models.
-In this study, we employed Random Forest (RF), which can account for non-linear interactions between features.
+We used Random Forest (RF), which can account for non-linear interactions between features.
 In RF, the importance (Gini Importance) of a feature (spectral bands) $X_j$ is defined as the sum of the decrease in impurity at the nodes where that feature was used for splitting, as shown in the following equation:
 
 \begin{equation}
@@ -189,7 +189,7 @@ We acquired the datasets used for model calibration and evaluation in independen
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{METHOD}
 
-In this study, we propose a framework for high-throughput and accurate identification by selecting optimal wavelengths from acquired hyperspectral data.
+We propose a framework for high-throughput and accurate identification by selecting optimal wavelengths from acquired hyperspectral data.
 The process consists of three main stages: (1) Problem Formulation, (2) Pre-processing, and (3) Feature Selection.
 
 \subsection{Problem Formulation}
@@ -257,7 +257,7 @@ Fig.~\ref{fig:feature_selection_results}(b) shows the selection frequency of eac
   \hfill
   % (b) Stability
   \begin{minipage}[b]{0.48\linewidth}
-    \centering-
+    \centering
     \includegraphics[width=\linewidth]{figures/paper_figure_stability_horizontal.jpg}
     \subcaption{Band selection frequency.}
     \label{fig:stability}
@@ -278,7 +278,7 @@ Contrasting with the internal validation, the performance peaked at $k=5$ with a
 Notably, this peak score slightly outperformed the baseline score of 0.916 obtained using the full spectrum of 98 bands.
 Adding features beyond $k=5$ caused a decrease in accuracy, with the F1-score dropping to 0.880 at $k=10$.
 % This phenomenon suggests that the lower-ranked features contain environmental noise or redundant information that hinders generalization.
-Consequently, we concluded that $k=5$ is the optimal cutoff for this system.
+The results indicate that $k=5$ is the optimal cutoff for this system.
 
 To further investigate how the model distinguishes between polymers
 , we analyzed the class-wise performance.
@@ -349,16 +349,8 @@ The primary advantage of this method is the superior throughput achieved by area
 While conventional point-scanning methods require time proportional to the number of measurement points, our method acquires spectral information for the entire field of view simultaneously.
 The experimental results demonstrate a speedup of several orders of magnitude compared to conventional spectroscopic techniques.
 
-\subsection{Limitations and Potential Improvements}
-This study has several limitations. First, we observed some confusion between PET and HDPE (PET misclassification rate: approx. 35\%).
-Analysis of the feature space using t-SNE revealed that while the clusters for PET and HDPE are spatially separated (indicating sufficient spectral distinguishability), a distinct distribution shift occurred between the calibration and validation datasets.
-Despite the inherent separability of the features, the Random Forest model misclassified a significant portion of PET validation samples as HDPE.
-This suggests that the model's static decision boundaries could not robustly handle the observed distributional discrepancy between the datasets.
-Future work will focus on methods to compensate for such dataset shifts to ensure consistent classification.
-
-Second is the scope of direct accuracy comparison.
-Since this study focuses on throughput improvement, we did not perform strict particle-to-particle comparison with conventional methods.
-
+\subsection{Limitations and Potential Improvements} This study has several limitations. First, as shown in the confusion matrix (Fig.~\ref{fig:confusion_matrix}), we observed significant confusion between PET and HDPE, with a 35\% misclassification rate for PET. While these polymers exhibit distinct spectral fingerprints in the calibration phase, their performance decreased in the external validation. We attribute this to a "distribution shift" between the two datasets, likely caused by subtle variations in lighting geometry and sample orientation during independent measurements. For practical industrial screening, the system must maintain high accuracy regardless of such environmental factors. Therefore, we will focus our future work on incorporating domain adaptation techniques and expanding the training library to improve the model's robustness against experimental variability.
+Second, we did not conduct a direct comparison of identification accuracy and measurement time between the proposed method and conventional analytical techniques, such as Fourier Transform Infrared (FTIR) or Raman spectroscopy. Since this study focused on establishing a high-throughput imaging framework using known polymer pellets, a quantitative performance evaluation against these standard methods was not performed in this proof-of-concept stage. Future work will quantify the absolute reliability and processing efficiency of our system by directly comparing its performance with these established point-scanning techniques.
 Third, the experiments utilized virgin polymer pellets.
 Since microplastics in actual marine environments may have altered fluorescence characteristics due to biofilm adhesion or weathering, further verification using real environmental samples is necessary.
 
@@ -367,7 +359,7 @@ As a proof-of-principle for high-throughput monitoring, we utilized these findin
 Fig.~\ref{fig:future_system} shows the block diagram of the proposed system.
 To replace the large benchtop equipment, we adopted high-power UV-LEDs as the light source.
 However, commercially available LEDs have a wider Full Width at Half Maximum (FWHM) compared to bandpass filters, and the selectable center wavelengths are discrete.
-Therefore, in this design, we selected a group of commercially available LEDs that approximately cover the spectral regions identified in the benchtop experiment.
+This design employs a group of commercially available LEDs that approximately cover the spectral regions identified in the benchtop experiment.
 In the future, we plan to perform re-optimization of features considering actual hardware characteristics using this compact system.
 We will adopt a single-board computer (SBC, e.g., Raspberry Pi 5) for control, aiming to realize a low-cost, standalone monitoring solution.
 
