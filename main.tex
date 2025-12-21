@@ -46,26 +46,18 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  The widespread contamination of microplastics (MPs) necessitates comprehensive monitoring across various environments. However, standard analytical methods, such as FTIR and Raman spectroscopy, rely on point-scanning, which is time-consuming and resource-intensive, limiting their utility for high-throughput screening. Here, we propose a rapid multispectral imaging method using polymer auto-fluorescence under UV excitation. Leveraging the distinct fingerprints observed in Excitation-Emission Matrices (EEMs), our approach optimizes spectral acquisition by selecting a minimal subset of effective spectral bands rather than measuring the full sets of spectra in the EEM. Using a Random Forest-based feature selection, we demonstrated that a subset of 5 spectral bands maximizes the classification performance for 9 representative virgin polymers, achieving a weighted F1-score of 0.92. This significant reduction in spectral dimensionality enables the design of simplified hardware using commercially available UV-LEDs, offering a practical and accessible solution for high-throughput MP monitoring.
+  The widespread contamination of microplastics (MPs) necessitates comprehensive monitoring across various environments. However, standard analytical methods, such as FTIR and Raman spectroscopy, rely on point-scanning, which is time-consuming and resource-intensive, limiting their utility for high-throughput screening. Here, we propose a rapid multispectral imaging method using polymer auto-fluorescence under UV excitation. Leveraging the distinct fingerprints observed in Excitation-Emission Matrices (EEMs), our approach optimizes spectral acquisition by selecting a minimal subset of effective spectral bands rather than measuring the full set of spectra in the EEM. Using a Random Forest-based feature selection, we demonstrated that a subset of 5 spectral bands maximizes the classification performance for 9 representative virgin polymers, achieving a weighted F1-score of 0.92. This significant reduction in spectral dimensionality enables the design of simplified hardware using commercially available UV-LEDs, offering a practical and accessible solution for high-throughput MP monitoring.
 \end{abstract}
 
 \keywords{Microplastics, Multispectral fluorescence imaging, UV excitation, High-throughput screening, Spectral optimization, Excitation-emission matrix}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
-The widespread accumulation of microplastics (MPs) in the natural environment is an increasingly serious global issue~\cite{Hale2020-sc, Jambeck2015-yz}.
-Understanding MP pollution sources and dynamics requires comprehensively quantifying their distribution and flux across various media~\cite{Rocha-Santos2015-ph}.
-Specifically, tracking pollution sources and environmental behavior, identifying the specific material type, such as polyethylene (PE) from packaging vs. polyethylene terephthalate (PET) from bottles, of every single sample collected in field surveys is essential~\cite{Hidalgo-Ruz2012-wx}.
-
-However, while conventional analytical methods such as Fourier Transform Infrared Spectroscopy (FTIR) and Raman spectroscopy excel at identifying the chemical structure of MPs, they rely on point-scanning, which requires an enormous amount of time for analysis~\cite{Prata2019-kt, Shim2017-kb}. Such techniques typically utilize bulky, expensive instrumentation restricted to laboratory settings, limiting mobility for on-site monitoring~\cite{Prata2019-kt}. Comprehensive chemical profiling of the vast amounts of MPs in the environment is virtually impossible within a realistic timeframe. In-process applications demand high-throughput solutions achieving both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}. To address this need, hyperspectral imaging (HSI) has emerged as a high-throughput alternative. Recently, Gebejes et al. demonstrated the successful identification of irregular-shaped microplastics directly in water using short-wave infrared (SWIR) HSI, overcoming water absorption interference through advanced signal processing~\cite{Gebejes2024-vw}.
-
-Excitation-Emission Matrix (EEM) spectroscopy enables the non-destructive characterization of chemical compositions.
-When coupled with supervised machine learning algorithms, it facilitates the robust classification of complex environmental samples~\cite{Hall2007-fl}. The diagnostic potential of fluorescence excitation scanning has notably been demonstrated in the medical field; for instance, Leavesley et al. applied hyperspectral imaging of fluorescence excitation spectra to successfully discriminate between normal and cancerous colorectal tissues~\cite{Leavesley2016-hy}. Building on this versatility, our research group has previously extended this approach to fluorescence imaging to visualize the spatial distribution of quality attributes.
-Specifically, we successfully visualized the distribution of freshness indices (such as K-value and IMP content) in frozen fish fillets~\cite{Bui2018-hw} and achieved non-destructive prediction of pH in frozen fish meat~\cite{Rahman2022-zd}.
+The widespread accumulation of microplastics (MPs) in the natural environment is an increasingly serious global issue~\cite{Hale2020-sc, Jambeck2015-yz}. Understanding MP pollution sources and dynamics requires comprehensively quantifying their distribution and flux across various media~\cite{Rocha-Santos2015-ph}. Specifically, tracking pollution sources and environmental behavior, and identifying the specific material type, such as polyethylene (PE) from packaging vs. polyethylene terephthalate (PET) from bottles of every single sample collected in field surveys is essential~\cite{Hidalgo-Ruz2012-wx}. However, while conventional analytical methods such as Fourier Transform Infrared Spectroscopy (FTIR) and Raman spectroscopy excel at identifying the chemical structure of MPs, they rely on point-scanning, which requires an enormous amount of time for analysis~\cite{Prata2019-kt, Shim2017-kb}. Such techniques typically utilize bulky, expensive instrumentation restricted to laboratory settings, limiting mobility for on-site monitoring~\cite{Prata2019-kt}. Comprehensive chemical profiling of the vast amounts of MPs in the environment is virtually impossible within a realistic timeframe. In-process applications, therefore, demand high-throughput solutions that achieve both practical classification accuracy and rapid analysis speeds~\cite{Serranti2024-fb}. To address this need, hyperspectral imaging (HSI) has emerged as a high-throughput alternative. Recently, Gebejes et al. demonstrated the successful identification of irregular-shaped microplastics directly in water using short-wave infrared (SWIR) HSI, overcoming water absorption interference through advanced signal processing~\cite{Gebejes2024-vw}.
 
 In the context of MP monitoring, Maes et al. established a rapid screening approach using fluorescent tagging with Nile Red~\cite{Maes2017-bt}. More recently, Li et al. proposed a fluorescence polarimetry method to identify plastic types~\cite{Li2025-hi}. While these approaches are effective, a label-free method utilizing intrinsic auto-fluorescence is more desirable for in-process monitoring to eliminate sample preparation steps.
 
-Specifically, the combination of fluorescence spectroscopy and machine learning has been established as a powerful tool for rapid classification tasks in food quality assessment. Successful applications have been widely reported, ranging from the monitoring of fish and meat products~\cite{Hassoun2019-of} and classification of olive oils~\cite{Dankowska2019-pr} to the automated detection of contamination on meat surfaces using deep learning~\cite{Gorji2022-pb}.
+Excitation-Emission Matrix (EEM) spectroscopy enables the non-destructive characterization of chemical compositions~\cite{Hall2007-fl}. When coupled with supervised machine learning algorithms, it facilitates the robust classification of complex environmental samples~\cite{Hall2007-fl}. The diagnostic potential of fluorescence excitation scanning has notably been demonstrated in the medical field; for instance, Leavesley et al. applied hyperspectral imaging of fluorescence excitation spectra to successfully discriminate between normal and cancerous colorectal tissues~\cite{Leavesley2016-hy}. Similarly, the combination of fluorescence spectroscopy and machine learning has been established as a powerful tool for rapid classification tasks in food quality assessment. Successful applications have been widely reported, ranging from the monitoring of fish and meat products~\cite{Hassoun2019-of} and classification of olive oils~\cite{Dankowska2019-pr} to the automated detection of contamination on meat surfaces using deep learning~\cite{Gorji2022-pb}. Building on this versatility, our research group has previously extended this approach to fluorescence imaging to visualize the spatial distribution of quality attributes. Specifically, we successfully visualized the distribution of freshness indices (such as K-value and IMP content) in frozen fish fillets~\cite{Bui2018-hw} and achieved non-destructive prediction of pH in frozen fish meat~\cite{Rahman2022-zd}.
 
 Furthermore, it is well documented that selecting optimal spectral bands, rather than utilizing the full spectrum, directly contributes to system cost reduction and processing efficiency~\cite{Bolton2018-yo, Mathews2008-kz}. For instance, Bolton et al. developed a low-cost portable system using discrete LEDs, achieving spectral performance comparable to expensive spectrometers~\cite{Bolton2018-yo}. Additionally, Mathews demonstrated that simultaneous acquisition of multiple bands effectively suppresses motion artifacts, which is critical for on-site dynamic measurements~\cite{Mathews2008-kz}. This optimization strategy facilitates the transition from bulky laboratory equipment to practical, portable hardware implementations suitable for on-site inspection~\cite{Beck2015-zd}.
 
@@ -98,8 +90,8 @@ These results confirmed that each polymer possesses a specific fluorescence spec
   \caption{Measured Excitation-Emission Matrices (EEMs) of the nine types of virgin polymer pellets.
   The contour plots represent the fluorescence intensity [a.u.] at excitation (y-axis) and emission (x-axis) wavelengths [nm] for each polymer sample.
   The distinct spectral patterns (fingerprints) observed for each polymer type demonstrate the feasibility of the proposed classification method based on UV-excited fluorescence.
-  Note: The diagonal regions corresponding to Rayleigh and Raman scattering have been computationally removed to enhance the visibility of fluorescence features.
-  \label{fig:eem}}
+  Note: The diagonal regions corresponding to Rayleigh and Raman scattering have been computationally removed to enhance the visibility of fluorescence features. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:eem}
 \end{figure}
 
 \subsection{Data-Driven Band Selection}
@@ -135,8 +127,8 @@ By selecting valid combinations satisfying the Stokes shift (fluorescence wavele
   \centering
   \includegraphics[width=0.8\linewidth]{figures/experimental_setup.jpg}
   \caption{Schematic diagram of the benchtop evaluation system used for hyperspectral fluorescent image acquisition.
-  A broadband xenon lamp and interchangeable bandpass filters were used to excite the samples, and the emitted fluorescence was captured by a UV-sensitive camera to construct a comprehensive dataset for spectral optimization.
-  \label{fig:setup} }
+  A broadband xenon lamp and interchangeable bandpass filters were used to excite the samples, and the emitted fluorescence was captured by a UV-sensitive camera to construct a comprehensive dataset for spectral optimization. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:setup}
 \end{figure}
 
 \subsection{Samples and Data Acquisition}
@@ -180,8 +172,8 @@ We acquired the datasets used for model calibration and evaluation in independen
   \caption{Images of the experimental samples consisting of nine types of virgin polymer pellets.
   (a) Visible light image; most samples appear transparent or white.
   (b, c) Representative fluorescence images acquired at (b) Ex 320 nm / Em 400 nm and (c) Ex 360 nm / Em 480 nm.
-  Note: The sample arrangement differs between visible and fluorescence images. Despite the random arrangement, we clearly observe characteristic fluorescence intensity differences.
-  \label{fig:samples}}
+  Note: The sample arrangement differs between visible and fluorescence images. Despite the random arrangement, we clearly observe characteristic fluorescence intensity differences. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:samples}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,8 +255,8 @@ Fig.~\ref{fig:feature_selection_results}(b) shows the selection frequency of eac
 
   \caption{Results of the feature selection.
     (a) Dependence of the Weighted Average F1-Score (y-axis) on the number of spectral bands $k$ (x-axis). Error bars represent standard deviation.
-    (b) Selection frequency (x-axis) of each spectral band (y-axis) during 10-fold cross-validation.
-  \label{fig:feature_selection_results}}
+    (b) Selection frequency (x-axis) of each spectral band (y-axis) during 10-fold cross-validation. http://dx.doi.org/doi.number.goes.here}
+    \label{fig:feature_selection_results}
 \end{figure}
 
 
@@ -307,8 +299,8 @@ Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of H
   \includegraphics[width=0.7\linewidth]{figures/external_validation_academic.jpg}
   \caption{Generalization performance on the external validation dataset.
   Dependence of the Weighted Average F1-Score (y-axis) on the number of features $k$ (x-axis).
-  The black solid line shows the proposed method, the gray dashed line indicates the full-spectrum baseline (98 bands), and the red dashed line marks the optimal cutoff at $k=5$.
-  \label{fig:external_validation}}
+  The black solid line shows the proposed method, the gray dashed line indicates the full-spectrum baseline (98 bands), and the red dashed line marks the optimal cutoff at $k=5$. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:external_validation}
 \end{figure}
 
 % ★ここが今回追加する「クラス別」の図です
@@ -317,8 +309,8 @@ Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of H
   % ファイル名は適宜変更してください
   \includegraphics[width=0.95\linewidth]{figures/external_validation_classwise_academic_with_line.jpg}
   \caption{Class-wise classification performance.
-  F1-Score (y-axis) versus the number of features $k$ (x-axis) for each material. The vertical red dashed line indicates the system-wide optimal cutoff ($k=5$), and the gray dashed line represents the full-spectrum baseline.
-  \label{fig:classwise_performance}}
+  F1-Score (y-axis) versus the number of features $k$ (x-axis) for each material. The vertical red dashed line indicates the system-wide optimal cutoff ($k=5$), and the gray dashed line represents the full-spectrum baseline. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:classwise_performance}
 \end{figure}
 
 % 混同行列の図を追加
@@ -329,8 +321,8 @@ Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of H
 
   \caption{Normalized confusion matrix evaluated on the external validation dataset ($k=5$).
   The diagonal elements represent the classification accuracy (Recall) for each class.
-  We observe a distinct confusion between HDPE and PET (True PET is misclassified as HDPE in 35\% of cases), highlighting the spectral similarity between these polymers.
-  \label{fig:confusion_matrix}}
+  We observe a distinct confusion between HDPE and PET (True PET is misclassified as HDPE in 35\% of cases), highlighting the spectral similarity between these polymers. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:confusion_matrix}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -365,15 +357,15 @@ We will adopt a single-board computer (SBC, e.g., Raspberry Pi 5) for control, a
   \centering
   \includegraphics[width=0.8\linewidth]{figures/LED_system.jpg}
   \caption{Block diagram of the proposed compact dedicated system.
-  This system uses high-power UV-LEDs and an SBC to achieve a standalone, low-cost solution.
-  \label{fig:future_system}}
+  This system uses high-power UV-LEDs and an SBC to achieve a standalone, low-cost solution. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:future_system}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{CONCLUSION}
 This study demonstrated the feasibility of a high-throughput microplastic identification method utilizing UV-excited fluorescence imaging.
 Using a step-wise feature selection approach, we determined that a subset of only five spectral bands yields a weighted F1-score of 0.92 across nine representative plastic types.
-The proposed method achieves significantly higher throughput compared to convensional point-scanning methods, demonstrating high potential for industrial application.
+The proposed method achieves significantly higher throughput compared to conventional point-scanning methods, demonstrating high potential for industrial application.
 Based on these findings, we also proposed a design for a compact standalone system using UV-LEDs.
 Feature work will focus on the construction of this dedicated hardware and validation experiments using real marine samples.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
