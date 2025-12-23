@@ -5,7 +5,7 @@
 \usepackage{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{subcaption}
-
+\usepackage{float}
 % -----------------------------------------------------------
 % 引用スタイル強制変更パッチ
 % spie.cls が citeパッケージを [superscript] で読み込むため、
@@ -235,7 +235,7 @@ As the number of spectral bands $k$ increased, the Weighted Average F1-Score for
 The score improvement subsequently plateaued, reaching a saturation level (approx. 0.99) around $k=11$.
 Fig.~\ref{fig:feature_selection_results}(b) shows the selection frequency of each spectral band obtained through 10-fold cross-validation. We observed that the top five bands were selected in more than 7 out of 10 folds.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   % (a) Optimization Curve
   \begin{minipage}[b]{0.48\linewidth}
@@ -283,6 +283,24 @@ Fig.~\ref{fig:classwise_performance} presents the F1-score transition for each o
     \item \textbf{Slow Saturation:} PMMA and LDPE exhibited a slower convergence to the baseline accuracy compared to other materials.
     % ; however, the system maintained a practical classification performance across all 9 classes using the optimized subset.
 \end{itemize}
+\begin{figure}[H]
+  \centering
+  % ファイル名は適宜変更してください
+  \includegraphics[width=0.7\linewidth]{figures/external_validation_academic.jpg}
+  \caption{Generalization performance on the external validation dataset.
+  Dependence of the Weighted Average F1-Score (y-axis) on the number of features $k$ (x-axis).
+  The black solid line shows the proposed method, the gray dashed line indicates the full-spectrum baseline (98 bands), and the red dashed line marks the optimal cutoff at $k=5$. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:external_validation}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  % ファイル名は適宜変更してください
+  \includegraphics[width=0.95\linewidth]{figures/external_validation_classwise_academic_with_line.jpg}
+  \caption{Class-wise classification performance.
+  F1-Score (y-axis) versus the number of features $k$ (x-axis) for each material. The vertical red dashed line indicates the system-wide optimal cutoff ($k=5$), and the gray dashed line represents the full-spectrum baseline. http://dx.doi.org/doi.number.goes.here}
+  \label{fig:classwise_performance}
+\end{figure}
 
 Fig.~\ref{fig:confusion_matrix} presents the confusion matrix obtained with the optimal subset of $k=5$.
 The model achieved perfect classification (a recall of 1.00) for ABS, PS, and PVC.
@@ -293,28 +311,12 @@ Specifically, the model misclassified 35\% of PET samples as HDPE, and 10\% of H
 % --- 図の配置 ---
 
 % 全体スコアの図
-\begin{figure}[htbp]
-  \centering
-  % ファイル名は適宜変更してください
-  \includegraphics[width=0.7\linewidth]{figures/external_validation_academic.jpg}
-  \caption{Generalization performance on the external validation dataset.
-  Dependence of the Weighted Average F1-Score (y-axis) on the number of features $k$ (x-axis).
-  The black solid line shows the proposed method, the gray dashed line indicates the full-spectrum baseline (98 bands), and the red dashed line marks the optimal cutoff at $k=5$. http://dx.doi.org/doi.number.goes.here}
-  \label{fig:external_validation}
-\end{figure}
 
 % ★ここが今回追加する「クラス別」の図です
-\begin{figure}[htbp]
-  \centering
-  % ファイル名は適宜変更してください
-  \includegraphics[width=0.95\linewidth]{figures/external_validation_classwise_academic_with_line.jpg}
-  \caption{Class-wise classification performance.
-  F1-Score (y-axis) versus the number of features $k$ (x-axis) for each material. The vertical red dashed line indicates the system-wide optimal cutoff ($k=5$), and the gray dashed line represents the full-spectrum baseline. http://dx.doi.org/doi.number.goes.here}
-  \label{fig:classwise_performance}
-\end{figure}
+
 
 % 混同行列の図を追加
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   % アップロードされた画像を "figures/" フォルダに入れて指定してください
   \includegraphics[width=0.7\linewidth]{figures/confusion_matrix.jpg}
@@ -367,7 +369,7 @@ This study demonstrated the feasibility of a high-throughput microplastic identi
 Using a step-wise feature selection approach, we determined that a subset of only five spectral bands yields a weighted F1-score of 0.92 across nine representative plastic types.
 The proposed method achieves significantly higher throughput compared to conventional point-scanning methods, demonstrating high potential for industrial application.
 Based on these findings, we also proposed a design for a compact standalone system using UV-LEDs.
-Feature work will focus on the construction of this dedicated hardware and validation experiments using real marine samples.
+Future work will focus on the construction of this dedicated hardware and validation experiments using real marine samples.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % References
 
